@@ -148,7 +148,7 @@ public class PhotoTemiFilmingActivity extends AppCompatActivity {
 
     private void startNextCountdown() {
         repetitionText.setText(String.format(Locale.getDefault(), "%d/%d", totalRepetitions - countdownCount + 1, totalRepetitions));
-        new CountDownTimer(10000, 1000) {
+        new CountDownTimer(5000, 1000) {
             public void onTick(long millisUntilFinished) {
                 countdownText.setText(String.valueOf(millisUntilFinished / 1000));
             }
