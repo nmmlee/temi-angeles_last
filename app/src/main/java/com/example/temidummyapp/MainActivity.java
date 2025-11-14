@@ -8,6 +8,7 @@ import android.widget.Toast;
 import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AlertDialog;
+import android.content.DialogInterface;
 import androidx.cardview.widget.CardView;
 import com.robotemi.sdk.Robot;
 import com.robotemi.sdk.TtsRequest;
@@ -150,8 +151,25 @@ public class MainActivity extends AppCompatActivity implements OnGoToLocationSta
                 navigatingDialog = new AlertDialog.Builder(MainActivity.this)
                         .setTitle("이동 중")
                         .setMessage("이동 안내 중입니다! 잠시만 길을 내어주세요.")
-                        .setCancelable(false)
+                        .setCancelable(true)
                         .create();
+                navigatingDialog.setCanceledOnTouchOutside(true);
+                navigatingDialog.setOnShowListener(new DialogInterface.OnShowListener() {
+                    @Override
+                    public void onShow(DialogInterface dialog) {
+                        if (navigatingDialog.getWindow() != null) {
+                            View decor = navigatingDialog.getWindow().getDecorView();
+                            if (decor != null) {
+                                decor.setOnClickListener(new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View v) {
+                                        dismissNavigatingDialog();
+                                    }
+                                });
+                            }
+                        }
+                    }
+                });
             }
             if (!navigatingDialog.isShowing()) {
                 navigatingDialog.show();
