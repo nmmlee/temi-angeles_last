@@ -59,8 +59,8 @@
                     android:layout_width="240dp"
                     android:layout_height="500dp"
                     android:layout_marginEnd="8dp"
-                    android:contentDescription="Coshow Template"
-                    android:src="@drawable/photo_template_coshow" />
+                    android:contentDescription="Blue Template"
+                    android:src="@drawable/photo_template_blue" />
 
                 <ImageView
                     android:layout_width="240dp"
@@ -72,20 +72,20 @@
                 <ImageView
                     android:layout_width="240dp"
                     android:layout_height="500dp"
-                    android:contentDescription="Picnic Template"
-                    android:src="@drawable/photo_template_picnic" />
+                    android:contentDescription="8bit Template"
+                    android:src="@drawable/photo_template_8bit" />
 
             </LinearLayout>
         </HorizontalScrollView>
 
         <Button
             android:id="@+id/action_button"
-            android:layout_width="240dp"
+            android:layout_width="360dp"
             android:layout_height="wrap_content"
             android:backgroundTint="#0a0a0a"
             android:text="시작하기"
             android:textColor="#ffffff"
-            android:textSize="24sp" />
+            android:textSize="36sp" />
 
     </LinearLayout>
 
