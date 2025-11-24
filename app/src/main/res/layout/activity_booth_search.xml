@@ -9,6 +9,17 @@
     android:orientation="vertical"
     android:padding="20dp">
 
+    <!-- 뒤로가기 버튼 -->
+    <ImageButton
+        android:id="@+id/backButton"
+        android:layout_width="58dp"
+        android:layout_height="54dp"
+        android:layout_gravity="start"
+        android:background="@android:color/transparent"
+        android:contentDescription="뒤로가기"
+        android:padding="4dp"
+        android:src="@drawable/ic_main_backward" />
+
     <!-- 제목 -->
     <TextView
         android:layout_width="wrap_content"
@@ -185,7 +196,7 @@
                         android:background="@drawable/button_unselected_selector"
                         android:textSize="20sp"
                         android:textStyle="bold"
-                        android:text="5분 내외"
+                        android:text="5분 이내"
                         android:textColor="#2B87F4" />
 
                     <Button
@@ -197,7 +208,7 @@
                         android:background="@drawable/button_unselected_selector"
                         android:textSize="20sp"
                         android:textStyle="bold"
-                        android:text="10분 내외"
+                        android:text="10분 이내"
                         android:textColor="#2B87F4" />
 
                     <Button
@@ -209,7 +220,7 @@
                         android:background="@drawable/button_unselected_selector"
                         android:textSize="20sp"
                         android:textStyle="bold"
-                        android:text="30분 내외"
+                        android:text="30분 이내"
                         android:textColor="#2B87F4" />
 
                     <Button
@@ -221,7 +232,7 @@
                         android:background="@drawable/button_unselected_selector"
                         android:textSize="20sp"
                         android:textStyle="bold"
-                        android:text="60분 내외"
+                        android:text="60분 이내"
                         android:textColor="#2B87F4" />
 
                     <Button
@@ -232,7 +243,7 @@
                         android:background="@drawable/button_unselected_selector"
                         android:textSize="20sp"
                         android:textStyle="bold"
-                        android:text="90분 내외"
+                        android:text="90분 이내"
                         android:textColor="#2B87F4" />
                 </LinearLayout>
             </ScrollView>

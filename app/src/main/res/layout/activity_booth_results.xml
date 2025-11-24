@@ -10,13 +10,12 @@
     <!-- 제목 -->
     <TextView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="주요 부스 안내"
-        android:textColor="#243B5A"
-        android:textSize="24sp"
-        android:textStyle="bold"
+        android:layout_height="70dp"
         android:gravity="center"
-        android:padding="24dp" />
+        android:text="주요 부스 안내"
+        android:textColor="#1B7EF4"
+        android:textSize="36sp"
+        android:textStyle="bold" />
 
     <!-- 선택한 필터 표시 -->
     <LinearLayout
@@ -49,10 +48,10 @@
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerBooths"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
+        android:layout_height="586dp"
         android:layout_weight="1"
-        android:padding="16dp"
         android:clipToPadding="false"
+        android:padding="16dp"
         tools:listitem="@layout/item_booth_card" />
 
     <!-- 뒤로 가기 버튼 -->

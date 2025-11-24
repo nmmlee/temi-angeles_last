@@ -11,12 +11,12 @@
     <!-- 뒤로가기 버튼 -->
     <ImageButton
         android:id="@+id/backButton"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
+        android:layout_width="69dp"
+        android:layout_height="66dp"
         android:background="@android:color/transparent"
         android:contentDescription="@string/menu_back_button"
         android:padding="4dp"
-        android:src="@drawable/ic_arrow_back"
+        android:src="@drawable/ic_main_backward"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 

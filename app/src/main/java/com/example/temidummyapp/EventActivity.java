@@ -6,6 +6,7 @@ import android.os.Handler;
 import android.os.Looper;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -24,6 +25,7 @@ public class EventActivity extends AppCompatActivity {
     private Button btnField1, btnField2, btnField3, btnField4, btnField5, btnField6, btnField7, btnField8, btnField9, btnField10;
     private Button btnField11, btnField12, btnField13, btnField14, btnField15, btnField16, btnField17, btnField18;
     private Button btnSearch;
+    private ImageButton backButton;
 
     private List<String> selectedTargets = new ArrayList<>();
     private List<String> selectedTimes = new ArrayList<>();
@@ -76,6 +78,15 @@ public class EventActivity extends AppCompatActivity {
         btnField18 = findViewById(R.id.btnField18);
 
         btnSearch = findViewById(R.id.btnSearch);
+        backButton = findViewById(R.id.backButton);
+
+        // 뒤로가기 버튼 클릭 리스너
+        backButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+        });
 
         // 참여대상 버튼 클릭 리스너 (중복 클릭 가능)
         View.OnClickListener targetListener = new View.OnClickListener() {
