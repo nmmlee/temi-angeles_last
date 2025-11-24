@@ -32,6 +32,19 @@
         <!-- 필터 버튼들이 동적으로 추가됨 -->
     </LinearLayout>
 
+    <!-- 결과 개수 표시 -->
+    <TextView
+        android:id="@+id/txtResultCount"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text=""
+        android:textColor="#243B5A"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        android:gravity="center"
+        android:paddingBottom="16dp"
+        android:visibility="visible" />
+
     <!-- 결과 리스트 -->
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerBooths"

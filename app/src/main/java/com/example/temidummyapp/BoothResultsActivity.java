@@ -2,6 +2,7 @@ package com.example.temidummyapp;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
@@ -24,6 +25,7 @@ public class BoothResultsActivity extends AppCompatActivity {
     private BoothCardAdapter adapter;
     private LinearLayout filterContainer;
     private Button btnBack;
+    private TextView txtResultCount;
 
     private List<String> selectedTargets;
     private List<String> selectedTimes;
@@ -33,6 +35,11 @@ public class BoothResultsActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_booth_results);
+        
+        // ActionBar 숨기기
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().hide();
+        }
 
         // Intent에서 선택한 조건 받기 (쉼표로 구분된 문자열)
         Intent intent = getIntent();
@@ -74,6 +81,12 @@ public class BoothResultsActivity extends AppCompatActivity {
         recyclerBooths = findViewById(R.id.recyclerBooths);
         filterContainer = findViewById(R.id.filterContainer);
         btnBack = findViewById(R.id.btnBack);
+        txtResultCount = findViewById(R.id.txtResultCount);
+
+        // 결과 개수 TextView 초기화 확인
+        if (txtResultCount == null) {
+            Log.e("BoothResultsActivity", "txtResultCount를 찾을 수 없습니다!");
+        }
 
         // RecyclerView 설정 (가로 스크롤)
         LinearLayoutManager layoutManager = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
@@ -176,6 +189,27 @@ public class BoothResultsActivity extends AppCompatActivity {
             if (results == null) {
                 results = new ArrayList<HashMap<String, String>>();
             }
+
+            // 결과 개수 표시
+            final int count = results.size();
+            Log.d("BoothResultsActivity", "검색 결과 개수: " + count);
+            Log.d("BoothResultsActivity", "txtResultCount null 체크: " + (txtResultCount == null));
+            
+            // UI 스레드에서 업데이트
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    if (txtResultCount != null) {
+                        String countText = count + "곳 조회하기";
+                        Log.d("BoothResultsActivity", "텍스트 설정: " + countText);
+                        txtResultCount.setText(countText);
+                        txtResultCount.setVisibility(View.VISIBLE);
+                        Log.d("BoothResultsActivity", "텍스트 실제 설정 후: " + txtResultCount.getText().toString());
+                    } else {
+                        Log.e("BoothResultsActivity", "txtResultCount가 null입니다!");
+                    }
+                }
+            });
 
             if (results.isEmpty()) {
                 Toast.makeText(this, "검색 결과가 없습니다.", Toast.LENGTH_SHORT).show();

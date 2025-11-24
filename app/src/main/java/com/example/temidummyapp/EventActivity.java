@@ -2,15 +2,19 @@ package com.example.temidummyapp;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.temidummyapp.db.EventSearchHelper;
 import com.example.temidummyapp.utils.CSVLoader;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 public class EventActivity extends AppCompatActivity {
@@ -24,11 +28,18 @@ public class EventActivity extends AppCompatActivity {
     private List<String> selectedTargets = new ArrayList<>();
     private List<String> selectedTimes = new ArrayList<>();
     private List<String> selectedFields = new ArrayList<>();
+    
+    private Handler mainHandler = new Handler(Looper.getMainLooper());
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_booth_search);
+        
+        // ActionBar 숨기기
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().hide();
+        }
 
         // 참여대상 버튼
         btnTarget1 = findViewById(R.id.btnTarget1);
@@ -87,6 +98,9 @@ public class EventActivity extends AppCompatActivity {
                     btn.setBackgroundTintList(null);
                     btn.setTextColor(0xFFFFFFFF); // 하얀색
                 }
+                
+                // 검색 결과 개수 업데이트
+                updateSearchButtonText();
             }
         };
 
@@ -117,6 +131,9 @@ public class EventActivity extends AppCompatActivity {
                     btn.setBackgroundTintList(null);
                     btn.setTextColor(0xFFFFFFFF); // 하얀색
                 }
+                
+                // 검색 결과 개수 업데이트
+                updateSearchButtonText();
             }
         };
 
@@ -147,6 +164,9 @@ public class EventActivity extends AppCompatActivity {
                     btn.setBackgroundTintList(null);
                     btn.setTextColor(0xFFFFFFFF); // 하얀색
                 }
+                
+                // 검색 결과 개수 업데이트
+                updateSearchButtonText();
             }
         };
 
@@ -196,11 +216,21 @@ public class EventActivity extends AppCompatActivity {
             public void run() {
                 try {
                     CSVLoader.loadCSVToDB(EventActivity.this);
+                    // CSV 로드 완료 후 초기 버튼 텍스트 업데이트
+                    mainHandler.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            updateSearchButtonText();
+                        }
+                    });
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
             }
         }).start();
+        
+        // 초기 버튼 텍스트 설정
+        updateSearchButtonText();
     }
 
     private void initializeButtons() {
@@ -252,6 +282,82 @@ public class EventActivity extends AppCompatActivity {
             sb.append(list.get(i));
         }
         return sb.toString();
+    }
+
+    // 검색 결과 개수를 계산하고 버튼 텍스트 업데이트
+    private void updateSearchButtonText() {
+        // 선택된 필터가 없으면 기본 텍스트 표시
+        if (selectedTargets.isEmpty() && selectedTimes.isEmpty() && selectedFields.isEmpty()) {
+            btnSearch.setText("선택한 조건으로 부스 찾기");
+            return;
+        }
+        
+        // 백그라운드 스레드에서 검색 실행
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    EventSearchHelper dbHelper = new EventSearchHelper(EventActivity.this);
+                    
+                    // 분야 리스트
+                    List<String> 분야목록 = (selectedFields != null && !selectedFields.isEmpty()) ? selectedFields : new ArrayList<String>();
+                    
+                    // 참여대상 리스트
+                    List<String> 대상목록 = (selectedTargets != null && !selectedTargets.isEmpty()) ? selectedTargets : new ArrayList<String>();
+                    
+                    // 소요시간 매핑: 텍스트를 숫자로 변환
+                    List<Integer> 최대시간목록 = new ArrayList<Integer>();
+                    if (selectedTimes != null && !selectedTimes.isEmpty()) {
+                        for (String time : selectedTimes) {
+                            if (time != null) {
+                                int 최대시간 = 0;
+                                if (time.contains("5분")) {
+                                    최대시간 = 5;
+                                } else if (time.contains("10분")) {
+                                    최대시간 = 10;
+                                } else if (time.contains("30분")) {
+                                    최대시간 = 30;
+                                } else if (time.contains("60분")) {
+                                    최대시간 = 60;
+                                } else if (time.contains("90분")) {
+                                    최대시간 = 90;
+                                }
+                                if (최대시간 > 0) {
+                                    최대시간목록.add(최대시간);
+                                }
+                            }
+                        }
+                    }
+                    
+                    // 검색 실행
+                    List<HashMap<String, String>> results = dbHelper.search(분야목록, null, 대상목록, 최대시간목록);
+                    
+                    if (results == null) {
+                        results = new ArrayList<HashMap<String, String>>();
+                    }
+                    
+                    final int count = results.size();
+                    
+                    // UI 스레드에서 버튼 텍스트 업데이트
+                    mainHandler.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            btnSearch.setText(count + "곳 조회");
+                        }
+                    });
+                    
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    // 오류 발생 시 기본 텍스트로 복원
+                    mainHandler.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            btnSearch.setText("선택한 조건으로 부스 찾기");
+                        }
+                    });
+                }
+            }
+        }).start();
     }
 
 }
