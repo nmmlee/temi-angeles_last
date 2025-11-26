@@ -20,6 +20,17 @@ public class PhotoTemi extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_phototemi);
 
+        // 뒤로가기 버튼 설정
+        View backButton = findViewById(R.id.backButton);
+        if (backButton != null) {
+            backButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    finish();
+                }
+            });
+        }
+
         final ImageView templateDefault = findViewById(R.id.template_default);
         final View templateDefaultBorder = findViewById(R.id.template_default_border);
         final ImageView templateBlack = findViewById(R.id.template_black);
