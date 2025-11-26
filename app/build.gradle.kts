@@ -64,6 +64,7 @@ dependencies {
 
     // Networking
     implementation("com.squareup.okhttp3:okhttp:4.9.3")
+    implementation("com.google.code.gson:gson:2.10.1")
 
     // Porcupine Wake Word SDK
     implementation("ai.picovoice:porcupine-android:3.0.0")
