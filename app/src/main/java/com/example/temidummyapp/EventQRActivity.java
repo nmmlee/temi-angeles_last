@@ -13,7 +13,7 @@ import androidx.viewpager2.widget.ViewPager2;
 import java.util.ArrayList;
 import java.util.List;
 
-public class EventQRActivity extends AppCompatActivity {
+public class EventQRActivity extends BaseActivity {
 
     private Button btnQueue;
     private Button btnEvent;

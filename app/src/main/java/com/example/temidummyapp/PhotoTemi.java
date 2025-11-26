@@ -9,7 +9,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.robotemi.sdk.Robot;
 import com.robotemi.sdk.TtsRequest;
 
-public class PhotoTemi extends AppCompatActivity {
+public class PhotoTemi extends BaseActivity {
 
     private View selectedBorder;
     private String selectedTemplateName;

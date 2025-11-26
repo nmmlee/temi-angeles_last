@@ -13,7 +13,7 @@ import com.robotemi.sdk.listeners.OnGoToLocationStatusChangedListener;
 import com.robotemi.sdk.listeners.OnRobotDragStateChangedListener;
 import android.content.DialogInterface;
 
-public class DirectionsActivity extends AppCompatActivity implements OnGoToLocationStatusChangedListener, OnRobotDragStateChangedListener {
+public class DirectionsActivity extends BaseActivity implements OnGoToLocationStatusChangedListener, OnRobotDragStateChangedListener {
 
     private Robot robot;
     private AlertDialog navigatingDialog;
@@ -28,14 +28,8 @@ public class DirectionsActivity extends AppCompatActivity implements OnGoToLocat
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        // 화면 항상 켜짐 유지
-        getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-
         // 레이아웃 설정
         setContentView(R.layout.activity_directions);
-
-        // 상태바 & 네비게이션바 숨김
-        applyImmersiveMode();
 
         robot = Robot.getInstance();
 
@@ -180,24 +174,6 @@ public class DirectionsActivity extends AppCompatActivity implements OnGoToLocat
             }
         }
         return inSampleSize;
-    }
-
-    @Override
-    public void onWindowFocusChanged(boolean hasFocus) {
-        super.onWindowFocusChanged(hasFocus);
-        if (hasFocus) applyImmersiveMode();
-    }
-
-    private void applyImmersiveMode() {
-        View decorView = getWindow().getDecorView();
-        decorView.setSystemUiVisibility(
-                View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
-                        | View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-                        | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
-                        | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-                        | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
-                        | View.SYSTEM_UI_FLAG_FULLSCREEN
-        );
     }
 
     @Override

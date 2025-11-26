@@ -18,7 +18,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-public class EventActivity extends AppCompatActivity {
+public class EventActivity extends BaseActivity {
 
     private Button btnTarget1, btnTarget2, btnTarget3, btnTarget4, btnTarget5;
     private Button btnTime1, btnTime2, btnTime3, btnTime4, btnTime5;
@@ -37,11 +37,6 @@ public class EventActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_booth_search);
-        
-        // ActionBar 숨기기
-        if (getSupportActionBar() != null) {
-            getSupportActionBar().hide();
-        }
 
         // 참여대상 버튼
         btnTarget1 = findViewById(R.id.btnTarget1);

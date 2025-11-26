@@ -11,7 +11,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.google.zxing.BarcodeFormat;
 import com.journeyapps.barcodescanner.BarcodeEncoder;
 
-public class PhotoTemiQrCodeActivity extends AppCompatActivity {
+public class PhotoTemiQrCodeActivity extends BaseActivity {
 
     private static final String TAG = "PhotoTemiQrCode";
 

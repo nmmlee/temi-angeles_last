@@ -35,7 +35,7 @@ import java.util.ArrayList;
 import java.util.Locale;
 import java.util.concurrent.ExecutionException;
 
-public class PhotoTemiFilmingActivity extends AppCompatActivity {
+public class PhotoTemiFilmingActivity extends BaseActivity {
 
     private static final int PERMISSION_REQUEST_CODE = 101;
     private static final String TAG = "PhotoTemiFilming";

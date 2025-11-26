@@ -26,7 +26,7 @@ import android.content.res.Configuration;
 import android.content.Context;
 import android.content.SharedPreferences;
 
-public class MainActivity extends AppCompatActivity implements OnGoToLocationStatusChangedListener, OnRobotDragStateChangedListener {
+public class MainActivity extends BaseActivity implements OnGoToLocationStatusChangedListener, OnRobotDragStateChangedListener {
 
     private Robot robot;
     private AlertDialog navigatingDialog;
@@ -44,20 +44,8 @@ public class MainActivity extends AppCompatActivity implements OnGoToLocationSta
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        // 저장된 언어 설정 적용
-        applySavedLanguage();
-
-        // 화면 항상 켜짐 유지
-        getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-
         // 레이아웃 설정
         setContentView(R.layout.activity_main);
-
-        // 상태바 & 네비게이션바 숨김
-        applyImmersiveMode();
-
-        // 오디오 녹음 권한 확인 및 요청
-        checkAndRequestAudioPermission();
 
         robot = Robot.getInstance();
 
@@ -425,23 +413,6 @@ public class MainActivity extends AppCompatActivity implements OnGoToLocationSta
         }
         return inSampleSize;
     }
-    @Override
-    public void onWindowFocusChanged(boolean hasFocus) {
-        super.onWindowFocusChanged(hasFocus);
-        if (hasFocus) applyImmersiveMode(); // 포커스 복귀 시 다시 풀스크린 적용
-    }
-
-    private void applyImmersiveMode() {
-        View decorView = getWindow().getDecorView();
-        decorView.setSystemUiVisibility(
-                View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
-                        | View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-                        | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
-                        | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-                        | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
-                        | View.SYSTEM_UI_FLAG_FULLSCREEN
-        );
-    }
 
     @Override
     protected void onStart() {
@@ -582,43 +553,6 @@ public class MainActivity extends AppCompatActivity implements OnGoToLocationSta
         }
     }
 
-    // 오디오 녹음 권한 확인 및 요청
-    private void checkAndRequestAudioPermission() {
-        if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.RECORD_AUDIO)
-                != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(this,
-                    new String[]{android.Manifest.permission.RECORD_AUDIO},
-                    PERMISSION_REQUEST_RECORD_AUDIO);
-        } else {
-            // 권한이 이미 있으면 Wake Word 서비스 시작
-            startWakeWordService();
-        }
-    }
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        if (requestCode == PERMISSION_REQUEST_RECORD_AUDIO) {
-            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                // 권한이 허용되면 Wake Word 서비스 시작
-                startWakeWordService();
-            } else {
-                Toast.makeText(this, "오디오 녹음 권한이 필요합니다. Wake Word 기능을 사용할 수 없습니다.", Toast.LENGTH_LONG).show();
-            }
-        }
-    }
-
-    private void startWakeWordService() {
-        android.util.Log.d("MainActivity", "Starting Wake Word Service...");
-        TemiApplication app = (TemiApplication) getApplication();
-        if (app != null && app.getWakeWordService() != null) {
-            app.getWakeWordService().startListening();
-            android.util.Log.d("MainActivity", "Wake Word Service startListening() called");
-        } else {
-            android.util.Log.e("MainActivity", "Failed to get Wake Word Service");
-            Toast.makeText(this, "Wake Word 서비스를 초기화할 수 없습니다.", Toast.LENGTH_SHORT).show();
-        }
-    }
 
     // ===== 언어 전환 기능 =====
     private void setupLanguageButtons() {
@@ -684,13 +618,6 @@ public class MainActivity extends AppCompatActivity implements OnGoToLocationSta
         updateLanguageButtonUI(languageCode);
     }
 
-    private void applySavedLanguage() {
-        String languageCode = getSavedLanguage();
-        if (languageCode != null && !languageCode.isEmpty()) {
-            setLocale(languageCode);
-        }
-    }
-
     private void setLocale(String languageCode) {
         Locale locale = new Locale(languageCode);
         Locale.setDefault(locale);
@@ -710,11 +637,6 @@ public class MainActivity extends AppCompatActivity implements OnGoToLocationSta
         SharedPreferences.Editor editor = prefs.edit();
         editor.putString("language", languageCode);
         editor.apply();
-    }
-
-    private String getSavedLanguage() {
-        SharedPreferences prefs = getSharedPreferences("AppSettings", Context.MODE_PRIVATE);
-        return prefs.getString("language", "ko"); // 기본값: 한국어
     }
 
     @Override

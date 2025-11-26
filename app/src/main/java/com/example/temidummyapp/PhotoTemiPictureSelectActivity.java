@@ -22,7 +22,7 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collections;
 
-public class PhotoTemiPictureSelectActivity extends AppCompatActivity {
+public class PhotoTemiPictureSelectActivity extends BaseActivity {
 
     private GridView pictureGrid;
     private ArrayList<String> imageUris;

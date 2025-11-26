@@ -19,7 +19,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-public class BoothResultsActivity extends AppCompatActivity {
+public class BoothResultsActivity extends BaseActivity {
 
     private RecyclerView recyclerBooths;
     private BoothCardAdapter adapter;

@@ -42,7 +42,7 @@ import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 
-public class PhotoTemiResultActivity extends AppCompatActivity {
+public class PhotoTemiResultActivity extends BaseActivity {
 
     private static final String TAG = "PhotoTemiResult";
     private static final String UPLOAD_URL = "https://phototemi.kwidea.com/api/upload";
