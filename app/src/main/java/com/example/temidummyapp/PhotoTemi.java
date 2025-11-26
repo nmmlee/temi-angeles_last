@@ -6,11 +6,14 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import androidx.appcompat.app.AppCompatActivity;
+import com.robotemi.sdk.Robot;
+import com.robotemi.sdk.TtsRequest;
 
 public class PhotoTemi extends AppCompatActivity {
 
     private View selectedBorder;
     private String selectedTemplateName;
+    private Robot robot;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -69,10 +72,15 @@ public class PhotoTemi extends AppCompatActivity {
         templateDeveloper.setOnClickListener(templateClickListener);
         template8bit.setOnClickListener(templateClickListener);
 
+        robot = Robot.getInstance();
         Button actionButton = findViewById(R.id.action_button);
         actionButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if (robot != null) {
+                    TtsRequest tts = TtsRequest.create("촬영을 시작합니다.", false);
+                    robot.speak(tts);
+                }
                 Intent intent = new Intent(PhotoTemi.this, PhotoTemiFilmingActivity.class);
                 intent.putExtra("template", selectedTemplateName);
                 startActivity(intent);
