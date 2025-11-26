@@ -39,6 +39,13 @@ public class WakeWordService {
             return;
         }
 
+        // AVD(에뮬레이터) 감지 - 크래시 방지
+        if (isEmulator()) {
+            Log.w(TAG, "⚠️ Running on emulator - Wake Word disabled for stability");
+            showToast("⚠️ 에뮬레이터에서는 Wake Word가 비활성화됩니다");
+            return;
+        }
+
         try {
             Log.i(TAG, "=== Wake Word Service 초기화 시작 ===");
             Log.i(TAG, "Keyword file: " + KEYWORD_FILE);
@@ -87,7 +94,8 @@ public class WakeWordService {
             Log.i(TAG, "Building PorcupineManager...");
             PorcupineManager.Builder builder = new PorcupineManager.Builder()
                     .setAccessKey(ACCESS_KEY)
-                    .setKeywordPaths(new String[] { KEYWORD_FILE });
+                    .setKeywordPaths(new String[] { KEYWORD_FILE })
+                    .setSensitivities(new float[] { 0.75f }); // 민감도 높임 (덜 자주 체크)
 
             // 한국어 모델 파일이 있는 경우 사용
             try {
@@ -106,11 +114,23 @@ public class WakeWordService {
             porcupineManager = builder.build(context, callback);
 
             Log.i(TAG, "Starting PorcupineManager...");
-            porcupineManager.start();
-            isListening = true;
-            Log.i(TAG, "✅ Wake word detection started successfully!");
-            Log.i(TAG, "📢 Now listening for: '테미야'");
-            showToast("🎤 '테미야' 감지 시작됨");
+
+            // AVD 환경 체크 (크래시 방지)
+            try {
+                porcupineManager.start();
+                isListening = true;
+                Log.i(TAG, "✅ Wake word detection started successfully!");
+                Log.i(TAG, "📢 Now listening for: '테미야'");
+                Log.i(TAG, "⚙️ Sensitivity: 0.75 (optimized for stability)");
+                showToast("🎤 '테미야' 감지 시작됨");
+            } catch (Exception startException) {
+                Log.e(TAG, "❌ Failed to start audio recording: " + startException.getMessage(), startException);
+                if (porcupineManager != null) {
+                    porcupineManager.delete();
+                    porcupineManager = null;
+                }
+                throw startException; // 상위 catch로 전달
+            }
 
         } catch (PorcupineException e) {
             Log.e(TAG, "❌ Failed to initialize Porcupine: " + e.getMessage(), e);
@@ -182,5 +202,18 @@ public class WakeWordService {
 
     public void release() {
         stopListening();
+    }
+
+    // 에뮬레이터 감지 메서드
+    private boolean isEmulator() {
+        return android.os.Build.FINGERPRINT.contains("generic")
+                || android.os.Build.FINGERPRINT.contains("unknown")
+                || android.os.Build.MODEL.contains("google_sdk")
+                || android.os.Build.MODEL.contains("Emulator")
+                || android.os.Build.MODEL.contains("Android SDK")
+                || android.os.Build.MANUFACTURER.contains("Genymotion")
+                || android.os.Build.BRAND.startsWith("generic")
+                || android.os.Build.DEVICE.startsWith("generic")
+                || android.os.Build.PRODUCT.contains("sdk");
     }
 }

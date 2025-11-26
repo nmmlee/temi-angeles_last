@@ -40,11 +40,11 @@ public class ChatActivity extends AppCompatActivity {
             public void onClick(View v) {
                 String text = input.getText() != null ? input.getText().toString().trim() : "";
                 if (text.isEmpty()) {
-                    Toast.makeText(ChatActivity.this, "메시지를 입력해 주세요.", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(ChatActivity.this, getString(R.string.chat_empty_message), Toast.LENGTH_SHORT).show();
                     return;
                 }
                 // TODO: 메시지를 리스트에 추가하고, GPT 응답을 요청하는 로직 연결
-                Toast.makeText(ChatActivity.this, "전송: " + text, Toast.LENGTH_SHORT).show();
+                Toast.makeText(ChatActivity.this, getString(R.string.chat_message_sent, text), Toast.LENGTH_SHORT).show();
                 input.setText("");
             }
         });

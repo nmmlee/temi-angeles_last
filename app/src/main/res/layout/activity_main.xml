@@ -72,7 +72,7 @@
             android:layout_height="34dp"
             android:layout_marginStart="44dp"
             android:layout_marginTop="16dp"
-            android:text="본 서비스는 we-meet 수업의 프로젝트 결과물로 만들어졌습니다."
+            android:text="@string/main_wemeet_text"
             android:textColor="#2B87F4"
             android:textSize="20sp"
             android:textStyle="bold"
@@ -188,18 +188,20 @@
                             android:orientation="vertical">
 
                             <TextView
+                                android:id="@+id/tv_navi_title"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="길 안내"
+                                android:text="@string/main_navigation_title"
                                 android:textColor="#FFFFFF"
                                 android:textSize="40sp"
                                 android:textStyle="bold" />
 
                             <TextView
+                                android:id="@+id/tv_navi_subtitle"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_marginTop="4dp"
-                                android:text="TEMI가 여러분을 안내해요"
+                                android:text="@string/main_navigation_subtitle"
                                 android:textColor="#E8F2FF"
                                 android:textSize="20sp" />
                         </LinearLayout>
@@ -244,18 +246,20 @@
                             android:orientation="vertical">
 
                             <TextView
+                                android:id="@+id/tv_event_title"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="주요 이벤트"
+                                android:text="@string/main_event_title"
                                 android:textColor="#FFFFFF"
                                 android:textSize="36sp"
                                 android:textStyle="bold" />
 
                             <TextView
+                                android:id="@+id/tv_event_subtitle"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_marginTop="4dp"
-                                android:text="진행 중인 행사 확인"
+                                android:text="@string/main_event_subtitle"
                                 android:textColor="#E8F2FF"
                                 android:textSize="20sp" />
                         </LinearLayout>
@@ -312,18 +316,20 @@
                             android:orientation="vertical">
 
                             <TextView
+                                android:id="@+id/tv_photo_title"
                                 android:layout_width="196dp"
                                 android:layout_height="match_parent"
-                                android:text="사진 찍기"
+                                android:text="@string/main_photo_title"
                                 android:textColor="#243B5A"
                                 android:textSize="48sp"
                                 android:textStyle="bold" />
 
                             <TextView
+                                android:id="@+id/tv_photo_subtitle"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_marginTop="4dp"
-                                android:text="TEMI와 사진을 찍어보세요"
+                                android:text="@string/main_photo_subtitle"
                                 android:textColor="#243B5A"
                                 android:textSize="24sp" />
                         </LinearLayout>
@@ -369,19 +375,21 @@
                                 android:src="@drawable/ic_main_calendar" />
 
                             <TextView
+                                android:id="@+id/tv_booth_title"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_marginTop="8dp"
-                                android:text="주요 부스"
+                                android:text="@string/main_booth_title"
                                 android:textColor="#243B5A"
                                 android:textSize="24sp"
                                 android:textStyle="bold" />
 
                             <TextView
+                                android:id="@+id/tv_booth_subtitle"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_marginTop="10dp"
-                                android:text="오늘의 주요행사는 무엇일까요?"
+                                android:text="@string/main_booth_subtitle"
                                 android:textColor="#6C7A90"
                                 android:textSize="14sp" />
                         </LinearLayout>
@@ -416,19 +424,21 @@
                                 android:src="@drawable/ic_main_coffee" />
 
                             <TextView
+                                android:id="@+id/tv_menu_title"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_marginTop="8dp"
-                                android:text="메뉴 추천"
+                                android:text="@string/main_menu_title"
                                 android:textColor="#243B5A"
                                 android:textSize="24sp"
                                 android:textStyle="bold" />
 
                             <TextView
+                                android:id="@+id/tv_menu_subtitle"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_marginTop="10dp"
-                                android:text="오늘은 무엇을 먹을까요?"
+                                android:text="@string/main_menu_subtitle"
                                 android:textColor="#6C7A90"
                                 android:textSize="14sp" />
                         </LinearLayout>

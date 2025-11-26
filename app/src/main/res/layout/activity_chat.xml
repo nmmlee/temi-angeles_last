@@ -28,7 +28,7 @@
             android:id="@+id/chat_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="TEMI 챗봇"
+            android:text="@string/chat_title"
             android:textColor="#111111"
             android:textSize="20sp"
             android:textStyle="bold"/>
@@ -62,7 +62,7 @@
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:hint="메시지를 입력하세요"
+            android:hint="@string/chat_input_hint"
             android:background="@null"
             android:paddingStart="12dp"
             android:paddingEnd="12dp"
@@ -73,7 +73,7 @@
             android:id="@+id/btn_send"
             android:layout_width="100dp"
             android:layout_height="match_parent"
-            android:text="전송"
+            android:text="@string/chat_send_button"
             android:textAllCaps="false"
             android:backgroundTint="#1A7DFF"
             android:textColor="#FFFFFF"/>

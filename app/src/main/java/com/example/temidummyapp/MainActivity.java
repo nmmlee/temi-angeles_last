@@ -21,6 +21,10 @@ import com.robotemi.sdk.TtsRequest;
 import com.robotemi.sdk.listeners.OnGoToLocationStatusChangedListener;
 import com.robotemi.sdk.listeners.OnRobotDragStateChangedListener;
 import java.util.List;
+import java.util.Locale;
+import android.content.res.Configuration;
+import android.content.Context;
+import android.content.SharedPreferences;
 
 public class MainActivity extends AppCompatActivity implements OnGoToLocationStatusChangedListener, OnRobotDragStateChangedListener {
 
@@ -40,6 +44,9 @@ public class MainActivity extends AppCompatActivity implements OnGoToLocationSta
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        // 저장된 언어 설정 적용
+        applySavedLanguage();
+
         // 화면 항상 켜짐 유지
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
@@ -53,6 +60,9 @@ public class MainActivity extends AppCompatActivity implements OnGoToLocationSta
         checkAndRequestAudioPermission();
 
         robot = Robot.getInstance();
+
+        // 언어 버튼 설정
+        setupLanguageButtons();
 
         // 텍스트 설정
         TextView title = findViewById(R.id.title);
@@ -115,7 +125,8 @@ public class MainActivity extends AppCompatActivity implements OnGoToLocationSta
                     public boolean onLongClick(View v) {
                         debugOutline = !debugOutline;
                         applyDebugOutline();
-                        Toast.makeText(MainActivity.this, debugOutline ? "디버그 경계선 ON" : "디버그 경계선 OFF", Toast.LENGTH_SHORT).show();
+                        String message = debugOutline ? getString(R.string.debug_outline_on) : getString(R.string.debug_outline_off);
+                        Toast.makeText(MainActivity.this, message, Toast.LENGTH_SHORT).show();
                         return true;
                     }
                 });
@@ -330,10 +341,10 @@ public class MainActivity extends AppCompatActivity implements OnGoToLocationSta
                 java.util.Map<String,String> map = AdminMappingStore.load(MainActivity.this);
                 String location = map.get(resName);
                 if (location == null || location.length() == 0) {
-                    Toast.makeText(MainActivity.this, "관리자에서 위치를 설정해 주세요.", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(MainActivity.this, getString(R.string.admin_location_not_set), Toast.LENGTH_SHORT).show();
                     return;
                 }
-                TtsRequest tts = TtsRequest.create("이동을 시작합니다.", false);
+                TtsRequest tts = TtsRequest.create(getString(R.string.navigation_start), false);
                 robot.speak(tts);
                 startNavigation(location);
             }
@@ -472,7 +483,7 @@ public class MainActivity extends AppCompatActivity implements OnGoToLocationSta
         currentDestination = target;
         showNavigatingDialog();
         // 화면 안내 멘트 + 음성 안내
-        TtsRequest tts = TtsRequest.create("이동 안내 중입니다! 잠시만 길을 내어주세요.", false);
+        TtsRequest tts = TtsRequest.create(getString(R.string.navigation_guiding), false);
         robot.speak(tts);
         robot.goTo(target);
     }
@@ -482,7 +493,7 @@ public class MainActivity extends AppCompatActivity implements OnGoToLocationSta
             if (navigatingDialog == null) {
                 navigatingDialog = new AlertDialog.Builder(MainActivity.this)
                         .setTitle("이동 중")
-                        .setMessage("이동 안내 중입니다! 잠시만 길을 내어주세요.")
+                        .setMessage(getString(R.string.navigation_guiding))
                         .setCancelable(true)
                         .create();
                 navigatingDialog.setCanceledOnTouchOutside(true);
@@ -530,7 +541,7 @@ public class MainActivity extends AppCompatActivity implements OnGoToLocationSta
                 currentDestination = null;
             }
             runOnUiThread(() ->
-                    Toast.makeText(MainActivity.this, "도착했습니다: " + location, Toast.LENGTH_SHORT).show()
+                    Toast.makeText(MainActivity.this, getString(R.string.navigation_arrived, location), Toast.LENGTH_SHORT).show()
             );
         } else if (s.contains("abort") || s.contains("cancel")) {
             // 이동이 중지됨 → 끌어당김(drags) 해제 후 자동 재시도 플로우에 의해 복구됨
@@ -550,7 +561,7 @@ public class MainActivity extends AppCompatActivity implements OnGoToLocationSta
             // 재시도
             runOnUiThread(() -> {
                 showNavigatingDialog();
-                TtsRequest tts = TtsRequest.create("이동을 다시 시작합니다.", false);
+                TtsRequest tts = TtsRequest.create(getString(R.string.navigation_restart), false);
                 robot.speak(tts);
                 robot.goTo(currentDestination);
             });
@@ -607,5 +618,153 @@ public class MainActivity extends AppCompatActivity implements OnGoToLocationSta
             android.util.Log.e("MainActivity", "Failed to get Wake Word Service");
             Toast.makeText(this, "Wake Word 서비스를 초기화할 수 없습니다.", Toast.LENGTH_SHORT).show();
         }
+    }
+
+    // ===== 언어 전환 기능 =====
+    private void setupLanguageButtons() {
+        TextView btnKor = findViewById(R.id.btn_kor);
+        TextView btnEng = findViewById(R.id.btn_eng);
+
+        if (btnKor == null || btnEng == null) return;
+
+        // 현재 언어 확인
+        String currentLang = getCurrentLanguage();
+        updateLanguageButtonUI(currentLang);
+
+        btnKor.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                changeLanguage("ko");
+            }
+        });
+
+        btnEng.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                changeLanguage("en");
+            }
+        });
+    }
+
+    private void updateLanguageButtonUI(String currentLang) {
+        TextView btnKor = findViewById(R.id.btn_kor);
+        TextView btnEng = findViewById(R.id.btn_eng);
+
+        if (btnKor == null || btnEng == null) return;
+
+        if ("ko".equals(currentLang)) {
+            // 한국어 선택됨
+            btnKor.setBackgroundColor(0xFF1976D2);
+            btnKor.setTextColor(0xFFFFFFFF);
+            btnEng.setBackgroundColor(0xFFDDE6F5);
+            btnEng.setTextColor(0xFF4A5A6A);
+        } else {
+            // 영어 선택됨
+            btnKor.setBackgroundColor(0xFFDDE6F5);
+            btnKor.setTextColor(0xFF4A5A6A);
+            btnEng.setBackgroundColor(0xFF1976D2);
+            btnEng.setTextColor(0xFFFFFFFF);
+        }
+    }
+
+    private void changeLanguage(String languageCode) {
+        String currentLang = getCurrentLanguage();
+        if (currentLang.equals(languageCode)) {
+            return; // 이미 선택된 언어
+        }
+
+        // 언어 설정 저장
+        saveLanguagePreference(languageCode);
+
+        // 로케일 변경
+        setLocale(languageCode);
+
+        // UI를 동적으로 갱신 (재시작 없이)
+        updateUITexts();
+        updateLanguageButtonUI(languageCode);
+    }
+
+    private void applySavedLanguage() {
+        String languageCode = getSavedLanguage();
+        if (languageCode != null && !languageCode.isEmpty()) {
+            setLocale(languageCode);
+        }
+    }
+
+    private void setLocale(String languageCode) {
+        Locale locale = new Locale(languageCode);
+        Locale.setDefault(locale);
+
+        Configuration config = new Configuration();
+        config.setLocale(locale);
+
+        getResources().updateConfiguration(config, getResources().getDisplayMetrics());
+    }
+
+    private String getCurrentLanguage() {
+        return getResources().getConfiguration().locale.getLanguage();
+    }
+
+    private void saveLanguagePreference(String languageCode) {
+        SharedPreferences prefs = getSharedPreferences("AppSettings", Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putString("language", languageCode);
+        editor.apply();
+    }
+
+    private String getSavedLanguage() {
+        SharedPreferences prefs = getSharedPreferences("AppSettings", Context.MODE_PRIVATE);
+        return prefs.getString("language", "ko"); // 기본값: 한국어
+    }
+
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+        // 시스템 언어 변경 시 UI 업데이트
+        updateUITexts();
+    }
+
+    private void updateUITexts() {
+        // 타이틀 텍스트 업데이트
+        TextView title = findViewById(R.id.title);
+        if (title != null) {
+            title.setText(R.string.temi_title);
+        }
+
+        // we-meet 텍스트 업데이트
+        TextView weMeetText = findViewById(R.id.textViewWeMeet);
+        if (weMeetText != null) {
+            weMeetText.setText(R.string.main_wemeet_text);
+        }
+
+        // 길 안내 카드 텍스트 업데이트
+        TextView naviTitle = findViewById(R.id.tv_navi_title);
+        TextView naviSubtitle = findViewById(R.id.tv_navi_subtitle);
+        if (naviTitle != null) naviTitle.setText(R.string.main_navigation_title);
+        if (naviSubtitle != null) naviSubtitle.setText(R.string.main_navigation_subtitle);
+
+        // 주요 이벤트 카드 텍스트 업데이트
+        TextView eventTitle = findViewById(R.id.tv_event_title);
+        TextView eventSubtitle = findViewById(R.id.tv_event_subtitle);
+        if (eventTitle != null) eventTitle.setText(R.string.main_event_title);
+        if (eventSubtitle != null) eventSubtitle.setText(R.string.main_event_subtitle);
+
+        // 사진 찍기 카드 텍스트 업데이트
+        TextView photoTitle = findViewById(R.id.tv_photo_title);
+        TextView photoSubtitle = findViewById(R.id.tv_photo_subtitle);
+        if (photoTitle != null) photoTitle.setText(R.string.main_photo_title);
+        if (photoSubtitle != null) photoSubtitle.setText(R.string.main_photo_subtitle);
+
+        // 주요 부스 카드 텍스트 업데이트
+        TextView boothTitle = findViewById(R.id.tv_booth_title);
+        TextView boothSubtitle = findViewById(R.id.tv_booth_subtitle);
+        if (boothTitle != null) boothTitle.setText(R.string.main_booth_title);
+        if (boothSubtitle != null) boothSubtitle.setText(R.string.main_booth_subtitle);
+
+        // 메뉴 추천 카드 텍스트 업데이트
+        TextView menuTitle = findViewById(R.id.tv_menu_title);
+        TextView menuSubtitle = findViewById(R.id.tv_menu_subtitle);
+        if (menuTitle != null) menuTitle.setText(R.string.main_menu_title);
+        if (menuSubtitle != null) menuSubtitle.setText(R.string.main_menu_subtitle);
     }
 }

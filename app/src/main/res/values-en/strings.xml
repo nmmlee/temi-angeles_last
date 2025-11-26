@@ -1,0 +1,45 @@
+<resources>
+    <string name="app_name">TemiDummyApp</string>
+    <string name="temi_title">Say "Temi Ya" to start a conversation with Temi</string>
+
+    <string name="menu_back_button">Back</string>
+    <string name="menu_title">Menu Recommendation</string>
+    <string name="menu_recommend_button">Get Recommendation</string>
+    <string name="menu_result_placeholder">Let me recommend today\'s lunch</string>
+    <string name="menu_result_format">How about %1$s today?</string>
+
+    <!-- Main screen texts -->
+    <string name="main_wemeet_text">This service was created as a project result of the we-meet class.</string>
+    <string name="main_navigation_title">Navigation</string>
+    <string name="main_navigation_subtitle">TEMI will guide you</string>
+    <string name="main_event_title">Main Events</string>
+    <string name="main_event_subtitle">Check ongoing events</string>
+    <string name="main_photo_title">Take Photos</string>
+    <string name="main_photo_subtitle">Take photos with TEMI</string>
+    <string name="main_booth_title">Main Booths</string>
+    <string name="main_booth_subtitle">What are today\'s main events?</string>
+    <string name="main_menu_title">Menu Recommendation</string>
+    <string name="main_menu_subtitle">What should we eat today?</string>
+
+    <!-- Menu Activity texts -->
+    <string name="menu_activity_title">TEMI\'s Menu Recommendation</string>
+    <string name="menu_activity_guide">Press \"Get Recommendation\"! TEMI will recommend today\'s meal</string>
+    <string name="menu_speech_bubble">TEMI recommends..</string>
+
+    <!-- Chat Activity texts -->
+    <string name="chat_title">TEMI Chatbot</string>
+    <string name="chat_input_hint">Enter a message</string>
+    <string name="chat_send_button">Send</string>
+    <string name="chat_empty_message">Please enter a message.</string>
+    <string name="chat_message_sent">Sent: %1$s</string>
+
+    <!-- Common messages -->
+    <string name="admin_location_not_set">Please set the location in admin settings.</string>
+    <string name="navigation_start">Starting navigation.</string>
+    <string name="navigation_guiding">Navigating! Please make way for a moment.</string>
+    <string name="navigation_arrived">Arrived: %1$s</string>
+    <string name="navigation_restart">Restarting navigation.</string>
+    <string name="debug_outline_on">Debug Outline ON</string>
+    <string name="debug_outline_off">Debug Outline OFF</string>
+</resources>
+

@@ -1,21 +1,27 @@
 package com.example.temidummyapp;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.content.res.Configuration;
 import android.os.Bundle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import android.Manifest;
+import java.util.Locale;
 
 /**
  * 모든 Activity의 기본 클래스
- * Wake Word 감지를 위한 권한 체크를 공통으로 처리합니다.
+ * Wake Word 감지를 위한 권한 체크 및 언어 설정을 공통으로 처리합니다.
  */
 public class BaseActivity extends AppCompatActivity {
     private static final int PERMISSION_REQUEST_RECORD_AUDIO = 1001;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        // 언어 설정을 가장 먼저 적용
+        applySavedLanguage();
         super.onCreate(savedInstanceState);
         checkAndRequestAudioPermission();
     }
@@ -59,6 +65,29 @@ public class BaseActivity extends AppCompatActivity {
                 }
             }
         }
+    }
+
+    // ===== 언어 설정 관리 =====
+    private void applySavedLanguage() {
+        String languageCode = getSavedLanguage();
+        if (languageCode != null && !languageCode.isEmpty()) {
+            setLocale(languageCode);
+        }
+    }
+
+    private void setLocale(String languageCode) {
+        Locale locale = new Locale(languageCode);
+        Locale.setDefault(locale);
+
+        Configuration config = new Configuration();
+        config.setLocale(locale);
+
+        getResources().updateConfiguration(config, getResources().getDisplayMetrics());
+    }
+
+    private String getSavedLanguage() {
+        SharedPreferences prefs = getSharedPreferences("AppSettings", Context.MODE_PRIVATE);
+        return prefs.getString("language", "ko"); // 기본값: 한국어
     }
 }
 

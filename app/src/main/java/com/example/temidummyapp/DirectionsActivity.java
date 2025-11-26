@@ -73,7 +73,8 @@ public class DirectionsActivity extends AppCompatActivity implements OnGoToLocat
                 public boolean onLongClick(View v) {
                     debugOutline = !debugOutline;
                     applyDebugOutline();
-                    Toast.makeText(DirectionsActivity.this, debugOutline ? "디버그 경계선 ON" : "디버그 경계선 OFF", Toast.LENGTH_SHORT).show();
+                    String message = debugOutline ? getString(R.string.debug_outline_on) : getString(R.string.debug_outline_off);
+                    Toast.makeText(DirectionsActivity.this, message, Toast.LENGTH_SHORT).show();
                     return true;
                 }
             });
@@ -96,10 +97,10 @@ public class DirectionsActivity extends AppCompatActivity implements OnGoToLocat
                 java.util.Map<String,String> map = AdminMappingStore.load(DirectionsActivity.this);
                 String location = map.get(resName);
                 if (location == null || location.length() == 0) {
-                    Toast.makeText(DirectionsActivity.this, "관리자에서 위치를 설정해 주세요.", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(DirectionsActivity.this, getString(R.string.admin_location_not_set), Toast.LENGTH_SHORT).show();
                     return;
                 }
-                TtsRequest tts = TtsRequest.create("이동을 시작합니다.", false);
+                TtsRequest tts = TtsRequest.create(getString(R.string.navigation_start), false);
                 robot.speak(tts);
                 startNavigation(location);
             }
@@ -222,7 +223,7 @@ public class DirectionsActivity extends AppCompatActivity implements OnGoToLocat
         currentDestination = target;
         showNavigatingDialog();
         // 화면 안내 멘트 + 음성 안내
-        TtsRequest tts = TtsRequest.create("이동 안내 중입니다! 잠시만 길을 내어주세요.", false);
+        TtsRequest tts = TtsRequest.create(getString(R.string.navigation_guiding), false);
         robot.speak(tts);
         robot.goTo(target);
     }
@@ -232,7 +233,7 @@ public class DirectionsActivity extends AppCompatActivity implements OnGoToLocat
             if (navigatingDialog == null) {
                 navigatingDialog = new AlertDialog.Builder(DirectionsActivity.this)
                         .setTitle("이동 중")
-                        .setMessage("이동 안내 중입니다! 잠시만 길을 내어주세요.")
+                        .setMessage(getString(R.string.navigation_guiding))
                         .setCancelable(true)
                         .create();
                 navigatingDialog.setCanceledOnTouchOutside(true);
@@ -279,7 +280,7 @@ public class DirectionsActivity extends AppCompatActivity implements OnGoToLocat
                 currentDestination = null;
             }
             runOnUiThread(() ->
-                    Toast.makeText(DirectionsActivity.this, "도착했습니다: " + location, Toast.LENGTH_SHORT).show()
+                    Toast.makeText(DirectionsActivity.this, getString(R.string.navigation_arrived, location), Toast.LENGTH_SHORT).show()
             );
         } else if (s.contains("abort") || s.contains("cancel")) {
             showNavigatingDialog();
@@ -297,7 +298,7 @@ public class DirectionsActivity extends AppCompatActivity implements OnGoToLocat
             // 재시도
             runOnUiThread(() -> {
                 showNavigatingDialog();
-                TtsRequest tts = TtsRequest.create("이동을 다시 시작합니다.", false);
+                TtsRequest tts = TtsRequest.create(getString(R.string.navigation_restart), false);
                 robot.speak(tts);
                 robot.goTo(currentDestination);
             });
