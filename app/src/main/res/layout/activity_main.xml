@@ -22,7 +22,6 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <!-- 상단 전체를 채우는 래퍼 컨테이너 -->
-
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/top_wrapper"
         android:layout_width="0dp"
@@ -32,7 +31,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
 
-        <!-- 상단 오른쪽: 언어 토글 (래퍼 안으로 이동) -->
+        <!-- 상단 오른쪽: 언어 토글 -->
         <LinearLayout
             android:id="@+id/lang_container"
             android:layout_width="wrap_content"
@@ -51,7 +50,7 @@
                 android:textSize="14sp"
                 android:paddingHorizontal="20dp"
                 android:paddingVertical="8dp"
-            android:background="#1976D2"
+                android:background="#1976D2"
                 android:textColor="#FFFFFF"
                 android:layout_marginEnd="4dp"/>
 
@@ -81,7 +80,7 @@
             app:layout_constraintTop_toTopOf="parent" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
-    <!-- 상단 안내 바 + 마이크 (top_wrapper 아래로 이동) -->
+    <!-- 상단 안내 바 + 마이크 -->
     <LinearLayout
         android:id="@+id/top_bar"
         android:layout_width="0dp"
@@ -114,23 +113,17 @@
             android:textStyle="bold" />
     </LinearLayout>
 
-    <!-- 하단 전체를 채우는 래퍼 컨테이너 -->
-
-    <!-- bottom_wrapper 추가 -->
-
-    <!-- 캐릭터: 화면 기준 오른쪽 하단 고정 -->
+    <!-- 하단 전체 래퍼 -->
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/bottom_wrapper"
         android:layout_width="0dp"
         android:layout_height="0dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/top_bar"
-        app:layout_constraintVertical_bias="0.0">
+        app:layout_constraintTop_toBottomOf="@id/top_bar">
 
-        <!-- 메인 컨텐츠 컨테이너: 좌/우 분할 (래퍼 안으로 이동) -->
+        <!-- 메인 컨텐츠 컨테이너 -->
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/content_container"
             android:layout_width="0dp"
@@ -146,54 +139,130 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent">
 
-            <!-- 왼쪽: 길 안내 (큰 카드) -->
-            <androidx.cardview.widget.CardView
-                android:id="@+id/card_navi"
+            <!-- 왼쪽: 길 안내 + 주요 이벤트 (2단) -->
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/left_panel"
                 android:layout_width="0dp"
                 android:layout_height="0dp"
-                android:layout_marginEnd="24dp"
-                app:cardBackgroundColor="#1A7DFF"
-                app:cardCornerRadius="40dp"
-                app:cardElevation="8dp"
-                app:cardPreventCornerOverlap="false"
-                app:cardUseCompatPadding="true"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toStartOf="@id/right_panel"
+                android:layout_marginEnd="12dp"
                 app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toStartOf="@id/right_panel"
                 app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintWidth_default="percent"
-                app:layout_constraintWidth_percent="0.50">
+                app:layout_constraintWidth_percent="0.41">
 
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:gravity="center"
-                    android:orientation="vertical"
-                    android:padding="32dp">
+                <!-- 위: 길 안내 (사진 찍기 카드와 동일 구조) -->
+                <androidx.cardview.widget.CardView
+                    android:id="@+id/card_navi"
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    app:cardBackgroundColor="#1A7DFF"
+                    app:cardCornerRadius="40dp"
+                    app:cardElevation="8dp"
+                    app:cardPreventCornerOverlap="false"
+                    app:cardUseCompatPadding="true"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintHeight_default="percent"
+                    app:layout_constraintHeight_percent="0.48">
 
-                    <ImageView
-                        android:layout_width="257dp"
-                        android:layout_height="252dp"
-                        android:src="@drawable/ic_map" />
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical"
+                        android:padding="24dp">
 
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="20dp"
-                        android:text="길 안내"
-                        android:textColor="#FFFFFF"
-                        android:textSize="64sp"
-                        android:textStyle="bold" />
+                        <ImageView
+                            android:layout_width="129dp"
+                            android:layout_height="114dp"
+                            android:layout_marginEnd="16dp"
+                            android:src="@drawable/ic_map" />
 
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="6dp"
-                        android:text="TEMI가 여러분을 안내해요"
-                        android:textColor="#E8F2FF"
-                        android:textSize="32sp" />
-                </LinearLayout>
-            </androidx.cardview.widget.CardView>
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:orientation="vertical">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="길 안내"
+                                android:textColor="#FFFFFF"
+                                android:textSize="40sp"
+                                android:textStyle="bold" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="4dp"
+                                android:text="TEMI가 여러분을 안내해요"
+                                android:textColor="#E8F2FF"
+                                android:textSize="20sp" />
+                        </LinearLayout>
+                    </LinearLayout>
+                </androidx.cardview.widget.CardView>
+
+                <!-- 아래: 주요 이벤트 (사진 찍기 카드와 동일 구조) -->
+                <androidx.cardview.widget.CardView
+                    android:id="@+id/card_main_event"
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    android:layout_marginTop="16dp"
+                    app:cardBackgroundColor="#1A7DFF"
+                    app:cardCornerRadius="40dp"
+                    app:cardElevation="8dp"
+                    app:cardPreventCornerOverlap="false"
+                    app:cardUseCompatPadding="true"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/card_navi"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintHeight_default="percent"
+                    app:layout_constraintHeight_percent="0.48">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical"
+                        android:padding="24dp">
+
+                        <ImageView
+                            android:layout_width="129dp"
+                            android:layout_height="114dp"
+                            android:layout_marginEnd="16dp"
+                            android:src="@drawable/ic_main_calendar" />
+
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:orientation="vertical">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="주요 이벤트"
+                                android:textColor="#FFFFFF"
+                                android:textSize="36sp"
+                                android:textStyle="bold" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="4dp"
+                                android:text="진행 중인 행사 확인"
+                                android:textColor="#E8F2FF"
+                                android:textSize="20sp" />
+                        </LinearLayout>
+                    </LinearLayout>
+                </androidx.cardview.widget.CardView>
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
 
             <!-- 오른쪽 전체 패널: 위/아래 구성 -->
             <androidx.constraintlayout.widget.ConstraintLayout
@@ -202,7 +271,7 @@
                 android:layout_height="0dp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toEndOf="@id/card_navi"
+                app:layout_constraintStart_toEndOf="@id/left_panel"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintWidth_default="percent"
                 app:layout_constraintWidth_percent="0.46">
@@ -364,13 +433,12 @@
                                 android:textSize="14sp" />
                         </LinearLayout>
                     </androidx.cardview.widget.CardView>
-                </androidx.constraintlayout.widget.ConstraintLayout>  <!-- bottom_row -->
-            </androidx.constraintlayout.widget.ConstraintLayout>      <!-- right_panel -->
+                </androidx.constraintlayout.widget.ConstraintLayout>
+            </androidx.constraintlayout.widget.ConstraintLayout>
         </androidx.constraintlayout.widget.ConstraintLayout>
-
-        <!-- content_container -->
     </androidx.constraintlayout.widget.ConstraintLayout>
 
+    <!-- 캐릭터: 화면 기준 오른쪽 하단 고정 -->
     <ImageView
         android:id="@+id/character"
         android:layout_width="140dp"
@@ -383,7 +451,7 @@
         app:layout_constraintBottom_toBottomOf="parent"/>
 
     <!-- 관리자 설정 패널 (초기 숨김) -->
-        <include
+    <include
         android:id="@+id/include_admin_panel"
         layout="@layout/panel_admin_mapping"
         android:visibility="gone"/>

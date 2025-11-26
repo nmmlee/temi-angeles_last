@@ -22,6 +22,7 @@ public class MenuActivity extends AppCompatActivity {
 
     private final String[] menus = {
             "국밥", "밀면", "떡볶이", "피자", "치킨", "햄버거", "비빔밥", "돈까스", "떡갈비",
+            "낙곱새", "중식", "부대찌개"
     };
 
     private TextView menuPrev2;

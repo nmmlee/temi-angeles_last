@@ -11,8 +11,8 @@
     <!-- 뒤로가기 버튼 -->
     <ImageButton
         android:id="@+id/backButton"
-        android:layout_width="53dp"
-        android:layout_height="52dp"
+        android:layout_width="37dp"
+        android:layout_height="45dp"
         android:layout_gravity="start"
         android:background="@android:color/transparent"
         android:contentDescription="뒤로가기"
@@ -21,26 +21,75 @@
 
     <!-- 제목 -->
     <TextView
+        android:id="@+id/titleText"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
-        android:layout_marginBottom="24dp"
+        android:layout_marginBottom="16dp"
         android:gravity="center"
-        android:text="지능형 로봇 프로그램 현장 줄서기 QR"
+        android:text="이벤트 및 QR 안내"
         android:textColor="#2B87F4"
         android:textSize="36sp"
         android:textStyle="bold" />
 
-    <!-- 그리드 레이아웃: 2행 4열 -->
-    <GridLayout
+    <!-- 탭 버튼 -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginBottom="16dp"
+        android:gravity="center"
+        android:paddingHorizontal="20dp">
+
+        <Button
+            android:id="@+id/btnQueue"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_marginEnd="8dp"
+            android:text="지능형 로봇 현장 줄서기"
+            android:textSize="14sp"
+            android:padding="12dp"
+            android:background="@drawable/button_selected"
+            android:backgroundTint="@null"
+            android:textColor="#FFFFFF" />
+
+        <Button
+            android:id="@+id/btnEvent"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_marginStart="8dp"
+            android:text="coshow 이벤트 안내"
+            android:textSize="14sp"
+            android:padding="12dp"
+            android:background="@drawable/button_unselected_selector"
+            android:backgroundTint="@null"
+            android:textColor="#2B87F4" />
+    </LinearLayout>
+
+    <!-- QR 코드 영역 -->
+    <FrameLayout
+        android:id="@+id/qrContainer"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
-        android:columnCount="4"
-        android:rowCount="2"
-        android:alignmentMode="alignMargins"
-        android:useDefaultMargins="false"
-        android:padding="8dp">
+        android:visibility="visible">
+
+        <androidx.core.widget.NestedScrollView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:fillViewport="true">
+
+            <!-- 그리드 레이아웃: 2행 4열 -->
+            <GridLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:columnCount="4"
+                android:rowCount="2"
+                android:alignmentMode="alignMargins"
+                android:useDefaultMargins="false"
+                android:padding="8dp">
 
         <!-- 카드 1: AI 드로잉 로봇 및 오목 로봇 체험 -->
         <androidx.cardview.widget.CardView
@@ -418,7 +467,56 @@
             </LinearLayout>
         </androidx.cardview.widget.CardView>
 
-    </GridLayout>
+            </GridLayout>
+        </androidx.core.widget.NestedScrollView>
+    </FrameLayout>
+
+    <!-- 이벤트 정보 영역 -->
+    <FrameLayout
+        android:id="@+id/eventContainer"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:visibility="gone">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <!-- ViewPager2 -->
+            <androidx.viewpager2.widget.ViewPager2
+                android:id="@+id/eventViewPager"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
+
+            <!-- 왼쪽 화살표 버튼 -->
+            <ImageButton
+                android:id="@+id/btnEventPrev"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:layout_alignParentStart="true"
+                android:layout_centerVertical="true"
+                android:layout_marginStart="8dp"
+                android:background="@android:color/transparent"
+                android:src="@drawable/ic_main_backward"
+                android:contentDescription="이전 이벤트"
+                android:visibility="gone" />
+
+            <!-- 오른쪽 화살표 버튼 -->
+            <ImageButton
+                android:id="@+id/btnEventNext"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:layout_alignParentEnd="true"
+                android:layout_centerVertical="true"
+                android:layout_marginEnd="8dp"
+                android:background="@android:color/transparent"
+                android:src="@drawable/ic_main_backward"
+                android:scaleX="-1"
+                android:contentDescription="다음 이벤트" />
+
+        </RelativeLayout>
+    </FrameLayout>
 
 </LinearLayout>
 
