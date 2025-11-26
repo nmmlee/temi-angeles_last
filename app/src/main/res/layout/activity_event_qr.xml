@@ -1,0 +1,424 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="#EEF4FF"
+    android:padding="20dp">
+
+    <!-- 뒤로가기 버튼 -->
+    <ImageButton
+        android:id="@+id/backButton"
+        android:layout_width="53dp"
+        android:layout_height="52dp"
+        android:layout_gravity="start"
+        android:background="@android:color/transparent"
+        android:contentDescription="뒤로가기"
+        android:padding="4dp"
+        android:src="@drawable/ic_main_backward" />
+
+    <!-- 제목 -->
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="24dp"
+        android:gravity="center"
+        android:text="지능형 로봇 프로그램 현장 줄서기 QR"
+        android:textColor="#2B87F4"
+        android:textSize="36sp"
+        android:textStyle="bold" />
+
+    <!-- 그리드 레이아웃: 2행 4열 -->
+    <GridLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:columnCount="4"
+        android:rowCount="2"
+        android:alignmentMode="alignMargins"
+        android:useDefaultMargins="false"
+        android:padding="8dp">
+
+        <!-- 카드 1: AI 드로잉 로봇 및 오목 로봇 체험 -->
+        <androidx.cardview.widget.CardView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_columnWeight="1"
+            android:layout_margin="8dp"
+            app:cardCornerRadius="16dp"
+            app:cardElevation="4dp"
+            app:cardBackgroundColor="#FFFFFF">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:gravity="center"
+                android:padding="16dp">
+
+                <ImageView
+                    android:id="@+id/icon1"
+                    android:layout_width="80dp"
+                    android:layout_height="80dp"
+                    android:layout_marginBottom="8dp"
+                    android:scaleType="fitCenter"
+                    android:src="@drawable/ic_event_drawing"
+                    tools:src="@drawable/ic_event_drawing" />
+
+                <TextView
+                    android:id="@+id/text1"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="8dp"
+                    android:gravity="center"
+                    android:text="AI 드로잉 로봇 및 오목 로봇 체험"
+                    android:textColor="#000000"
+                    android:textSize="14sp"
+                    android:textStyle="bold" />
+
+                <ImageView
+                    android:id="@+id/qr1"
+                    android:layout_width="120dp"
+                    android:layout_height="120dp"
+                    android:scaleType="fitCenter"
+                    android:src="@drawable/qr_ai"
+                    tools:src="@drawable/qr_ai" />
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
+
+        <!-- 카드 2: ROBO SHOW -->
+        <androidx.cardview.widget.CardView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_columnWeight="1"
+            android:layout_margin="8dp"
+            app:cardCornerRadius="16dp"
+            app:cardElevation="4dp"
+            app:cardBackgroundColor="#FFFFFF">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:gravity="center"
+                android:padding="16dp">
+
+                <ImageView
+                    android:id="@+id/icon2"
+                    android:layout_width="80dp"
+                    android:layout_height="80dp"
+                    android:layout_marginBottom="8dp"
+                    android:scaleType="fitCenter"
+                    android:src="@drawable/ic_event_coshow"
+                    tools:src="@drawable/ic_event_coshow" />
+
+                <TextView
+                    android:id="@+id/text2"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="8dp"
+                    android:gravity="center"
+                    android:text="ROBO SHOW"
+                    android:textColor="#000000"
+                    android:textSize="14sp"
+                    android:textStyle="bold" />
+
+                <ImageView
+                    android:id="@+id/qr2"
+                    android:layout_width="120dp"
+                    android:layout_height="120dp"
+                    android:scaleType="fitCenter"
+                    android:src="@drawable/qr_robotshow"
+                    tools:src="@drawable/qr_robotshow" />
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
+
+        <!-- 카드 3: 유선 스파이더로봇 만들기 -->
+        <androidx.cardview.widget.CardView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_columnWeight="1"
+            android:layout_margin="8dp"
+            app:cardCornerRadius="16dp"
+            app:cardElevation="4dp"
+            app:cardBackgroundColor="#FFFFFF">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:gravity="center"
+                android:padding="16dp">
+
+                <ImageView
+                    android:id="@+id/icon3"
+                    android:layout_width="80dp"
+                    android:layout_height="80dp"
+                    android:layout_marginBottom="8dp"
+                    android:scaleType="fitCenter"
+                    android:src="@drawable/ic_event_spider"
+                    tools:src="@drawable/ic_event_spider" />
+
+                <TextView
+                    android:id="@+id/text3"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="8dp"
+                    android:gravity="center"
+                    android:text="유선 스파이더로봇 만들기"
+                    android:textColor="#000000"
+                    android:textSize="14sp"
+                    android:textStyle="bold" />
+
+                <ImageView
+                    android:id="@+id/qr3"
+                    android:layout_width="120dp"
+                    android:layout_height="120dp"
+                    android:scaleType="fitCenter"
+                    android:src="@drawable/qr_spider"
+                    tools:src="@drawable/qr_spider" />
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
+
+        <!-- 카드 4: 자이로 외발주행로봇 만들기 -->
+        <androidx.cardview.widget.CardView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_columnWeight="1"
+            android:layout_margin="8dp"
+            app:cardCornerRadius="16dp"
+            app:cardElevation="4dp"
+            app:cardBackgroundColor="#FFFFFF">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:gravity="center"
+                android:padding="16dp">
+
+                <ImageView
+                    android:id="@+id/icon4"
+                    android:layout_width="80dp"
+                    android:layout_height="80dp"
+                    android:layout_marginBottom="8dp"
+                    android:scaleType="fitCenter"
+                    android:src="@drawable/ic_event_gyro"
+                    tools:src="@drawable/ic_event_gyro" />
+
+                <TextView
+                    android:id="@+id/text4"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="8dp"
+                    android:gravity="center"
+                    android:text="자이로 외발주행로봇 만들기"
+                    android:textColor="#000000"
+                    android:textSize="14sp"
+                    android:textStyle="bold" />
+
+                <ImageView
+                    android:id="@+id/qr4"
+                    android:layout_width="120dp"
+                    android:layout_height="120dp"
+                    android:scaleType="fitCenter"
+                    android:src="@drawable/qr_gyro"
+                    tools:src="@drawable/qr_gyro" />
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
+
+        <!-- 카드 5: 경주로봇 만들기 -->
+        <androidx.cardview.widget.CardView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_columnWeight="1"
+            android:layout_margin="8dp"
+            app:cardCornerRadius="16dp"
+            app:cardElevation="4dp"
+            app:cardBackgroundColor="#FFFFFF">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:gravity="center"
+                android:padding="16dp">
+
+                <ImageView
+                    android:id="@+id/icon5"
+                    android:layout_width="80dp"
+                    android:layout_height="80dp"
+                    android:layout_marginBottom="8dp"
+                    android:scaleType="fitCenter"
+                    android:src="@drawable/ic_event_car"
+                    tools:src="@drawable/ic_event_car" />
+
+                <TextView
+                    android:id="@+id/text5"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="8dp"
+                    android:gravity="center"
+                    android:text="경주로봇 만들기"
+                    android:textColor="#000000"
+                    android:textSize="14sp"
+                    android:textStyle="bold" />
+
+                <ImageView
+                    android:id="@+id/qr5"
+                    android:layout_width="120dp"
+                    android:layout_height="120dp"
+                    android:scaleType="fitCenter"
+                    android:src="@drawable/qr_car"
+                    tools:src="@drawable/qr_car" />
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
+
+        <!-- 카드 6: 로봇아 멍멍해봐 4족보행로봇 활용 체험 -->
+        <androidx.cardview.widget.CardView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_columnWeight="1"
+            android:layout_margin="8dp"
+            app:cardCornerRadius="16dp"
+            app:cardElevation="4dp"
+            app:cardBackgroundColor="#FFFFFF">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:gravity="center"
+                android:padding="16dp">
+
+                <ImageView
+                    android:id="@+id/icon6"
+                    android:layout_width="80dp"
+                    android:layout_height="80dp"
+                    android:layout_marginBottom="8dp"
+                    android:scaleType="fitCenter"
+                    android:src="@drawable/ic_event_dog"
+                    tools:src="@drawable/ic_event_dog" />
+
+                <TextView
+                    android:id="@+id/text6"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="8dp"
+                    android:gravity="center"
+                    android:text="로봇아 멍멍해봐 4족보행로봇 활용 체험"
+                    android:textColor="#000000"
+                    android:textSize="14sp"
+                    android:textStyle="bold" />
+
+                <ImageView
+                    android:id="@+id/qr6"
+                    android:layout_width="120dp"
+                    android:layout_height="120dp"
+                    android:scaleType="fitCenter"
+                    android:src="@drawable/qr_dog"
+                    tools:src="@drawable/qr_dog" />
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
+
+        <!-- 카드 7: 청소로봇 만들기 -->
+        <androidx.cardview.widget.CardView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_columnWeight="1"
+            android:layout_margin="8dp"
+            app:cardCornerRadius="16dp"
+            app:cardElevation="4dp"
+            app:cardBackgroundColor="#FFFFFF">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:gravity="center"
+                android:padding="16dp">
+
+                <ImageView
+                    android:id="@+id/icon7"
+                    android:layout_width="80dp"
+                    android:layout_height="80dp"
+                    android:layout_marginBottom="8dp"
+                    android:scaleType="fitCenter"
+                    android:src="@drawable/ic_event_cleaner"
+                    tools:src="@drawable/ic_event_cleaner" />
+
+                <TextView
+                    android:id="@+id/text7"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="8dp"
+                    android:gravity="center"
+                    android:text="청소로봇 만들기"
+                    android:textColor="#000000"
+                    android:textSize="14sp"
+                    android:textStyle="bold" />
+
+                <ImageView
+                    android:id="@+id/qr7"
+                    android:layout_width="120dp"
+                    android:layout_height="120dp"
+                    android:scaleType="fitCenter"
+                    android:src="@drawable/qr_cleaner"
+                    tools:src="@drawable/qr_cleaner" />
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
+
+        <!-- 카드 8: 휴머노이드 이론교육 및 미션수행 -->
+        <androidx.cardview.widget.CardView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_columnWeight="1"
+            android:layout_margin="8dp"
+            app:cardCornerRadius="16dp"
+            app:cardElevation="4dp"
+            app:cardBackgroundColor="#FFFFFF">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:gravity="center"
+                android:padding="16dp">
+
+                <ImageView
+                    android:id="@+id/icon8"
+                    android:layout_width="80dp"
+                    android:layout_height="80dp"
+                    android:layout_marginBottom="8dp"
+                    android:scaleType="fitCenter"
+                    android:src="@drawable/ic_event_humanoid"
+                    tools:src="@drawable/ic_event_humanoid" />
+
+                <TextView
+                    android:id="@+id/text8"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="8dp"
+                    android:gravity="center"
+                    android:text="휴머노이드 이론교육 및 미션수행"
+                    android:textColor="#000000"
+                    android:textSize="14sp"
+                    android:textStyle="bold" />
+
+                <ImageView
+                    android:id="@+id/qr8"
+                    android:layout_width="120dp"
+                    android:layout_height="120dp"
+                    android:scaleType="fitCenter"
+                    android:src="@drawable/qr_humanoid"
+                    tools:src="@drawable/qr_humanoid" />
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
+
+    </GridLayout>
+
+</LinearLayout>
+

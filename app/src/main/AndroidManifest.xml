@@ -6,6 +6,10 @@
     <!-- 카메라 권한 -->
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-feature android:name="android.hardware.camera" android:required="false" />
+
+    <!-- Porcupine Wake Word를 위한 오디오 녹음 권한 -->
+    <uses-permission android:name="android.permission.RECORD_AUDIO" />
 
     <!-- 저장소 권한 (Android 9 이하에서 사진 저장 시 필요) -->
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"
@@ -14,6 +18,7 @@
         android:maxSdkVersion="28" />
 
     <application
+        android:name=".TemiApplication"
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
@@ -77,6 +82,18 @@
         <!-- ✅ 주요 부스 검색 Activity 등록 -->
         <activity
             android:name=".EventActivity"
+            android:exported="false"
+            android:screenOrientation="landscape" />
+
+        <!-- ✅ GPT 채팅 Activity 등록 -->
+        <activity
+            android:name=".ChatActivity"
+            android:exported="false"
+            android:screenOrientation="landscape" />
+
+        <!-- ✅ QR 안내 Activity 등록 -->
+        <activity
+            android:name=".EventQRActivity"
             android:exported="false"
             android:screenOrientation="landscape" />
 

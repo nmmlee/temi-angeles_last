@@ -24,7 +24,7 @@ public class CSVLoader {
 
         try {
             // assets 폴더의 CSV 파일 읽기
-            is = context.getAssets().open("coss_event_final_v2.csv");
+            is = context.getAssets().open("booth_program.csv");
             reader = new BufferedReader(new InputStreamReader(is, StandardCharsets.UTF_8));
 
             db.beginTransaction();
@@ -51,7 +51,8 @@ public class CSVLoader {
                 String 소요시간 = safe(tokens, 5);
                 String 체험기간 = safe(tokens, 6);
                 String 체험시간 = safe(tokens, 7);
-                String url = safe(tokens, 8);
+                String 이미지파일 = safe(tokens, 8);
+                String url = safe(tokens, 9);
 
                 ContentValues values = new ContentValues();
                 values.put("분야", 분야);
@@ -72,6 +73,7 @@ public class CSVLoader {
 
                 values.put("체험기간", 체험기간);
                 values.put("체험시간", 체험시간);
+                values.put("이미지파일", 이미지파일);
                 values.put("url", url);
 
                 db.insert("events", null, values);

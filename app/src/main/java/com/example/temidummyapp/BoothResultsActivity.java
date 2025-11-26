@@ -2,6 +2,7 @@ package com.example.temidummyapp;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
@@ -24,25 +25,68 @@ public class BoothResultsActivity extends AppCompatActivity {
     private BoothCardAdapter adapter;
     private LinearLayout filterContainer;
     private Button btnBack;
+    private TextView txtResultCount;
 
-    private String selectedTarget;
-    private String selectedTime;
-    private String selectedField;
+    private List<String> selectedTargets;
+    private List<String> selectedTimes;
+    private List<String> selectedFields;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_booth_results);
+        
+        // ActionBar 숨기기
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().hide();
+        }
 
-        // Intent에서 선택한 조건 받기
+        // Intent에서 선택한 조건 받기 (쉼표로 구분된 문자열)
         Intent intent = getIntent();
-        selectedTarget = intent.getStringExtra("target");
-        selectedTime = intent.getStringExtra("time");
-        selectedField = intent.getStringExtra("field");
+        String targetsStr = intent.getStringExtra("targets");
+        String timesStr = intent.getStringExtra("times");
+        String fieldsStr = intent.getStringExtra("fields");
+        
+        // 쉼표로 구분된 문자열을 리스트로 변환
+        selectedTargets = new ArrayList<>();
+        if (targetsStr != null && !targetsStr.isEmpty()) {
+            String[] targets = targetsStr.split(",");
+            for (String target : targets) {
+                if (target != null && !target.trim().isEmpty()) {
+                    selectedTargets.add(target.trim());
+                }
+            }
+        }
+        
+        selectedTimes = new ArrayList<>();
+        if (timesStr != null && !timesStr.isEmpty()) {
+            String[] times = timesStr.split(",");
+            for (String time : times) {
+                if (time != null && !time.trim().isEmpty()) {
+                    selectedTimes.add(time.trim());
+                }
+            }
+        }
+        
+        selectedFields = new ArrayList<>();
+        if (fieldsStr != null && !fieldsStr.isEmpty()) {
+            String[] fields = fieldsStr.split(",");
+            for (String field : fields) {
+                if (field != null && !field.trim().isEmpty()) {
+                    selectedFields.add(field.trim());
+                }
+            }
+        }
 
         recyclerBooths = findViewById(R.id.recyclerBooths);
         filterContainer = findViewById(R.id.filterContainer);
         btnBack = findViewById(R.id.btnBack);
+        txtResultCount = findViewById(R.id.txtResultCount);
+
+        // 결과 개수 TextView 초기화 확인
+        if (txtResultCount == null) {
+            Log.e("BoothResultsActivity", "txtResultCount를 찾을 수 없습니다!");
+        }
 
         // RecyclerView 설정 (가로 스크롤)
         LinearLayoutManager layoutManager = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
@@ -53,8 +97,13 @@ public class BoothResultsActivity extends AppCompatActivity {
         // 필터 표시
         displayFilters();
 
-        // 검색 실행
-        searchBooths();
+        // 검색 실행 (예외 처리)
+        try {
+            searchBooths();
+        } catch (Exception e) {
+            e.printStackTrace();
+            Toast.makeText(this, "검색 중 오류가 발생했습니다: " + e.getMessage(), Toast.LENGTH_LONG).show();
+        }
 
         // 뒤로 가기 버튼
         btnBack.setOnClickListener(new View.OnClickListener() {
@@ -68,14 +117,20 @@ public class BoothResultsActivity extends AppCompatActivity {
     private void displayFilters() {
         filterContainer.removeAllViews();
 
-        if (selectedTarget != null && selectedTarget.length() > 0) {
-            addFilterChip(selectedTarget);
+        if (selectedTargets != null) {
+            for (String target : selectedTargets) {
+                addFilterChip(target);
+            }
         }
-        if (selectedTime != null && selectedTime.length() > 0) {
-            addFilterChip(selectedTime);
+        if (selectedTimes != null) {
+            for (String time : selectedTimes) {
+                addFilterChip(time);
+            }
         }
-        if (selectedField != null && selectedField.length() > 0) {
-            addFilterChip(selectedField);
+        if (selectedFields != null) {
+            for (String field : selectedFields) {
+                addFilterChip(field);
+            }
         }
     }
 
@@ -96,50 +151,75 @@ public class BoothResultsActivity extends AppCompatActivity {
     }
 
     private void searchBooths() {
-        EventSearchHelper dbHelper = new EventSearchHelper(this);
+        try {
+            EventSearchHelper dbHelper = new EventSearchHelper(this);
 
-        // 분야
-        String 분야 = selectedField != null ? selectedField : "";
+            // 분야 리스트 (null 체크)
+            List<String> 분야목록 = (selectedFields != null) ? selectedFields : new ArrayList<String>();
 
-        // 참여대상 매핑
-        String 대상 = "";
-        if (selectedTarget != null) {
-            if (selectedTarget.equals("전국민 대상")) {
-                대상 = "전국민대상";
-            } else if (selectedTarget.equals("초등학생 이상")) {
-                대상 = "초등학생";
-            } else if (selectedTarget.equals("중학생 이상")) {
-                대상 = "중학생 이상";
-            } else if (selectedTarget.equals("초·중·고 학생 및 일반 관람객")) {
-                대상 = "초·중·고 학생 및 일반 관람객";
-            } else if (selectedTarget.equals("누구나(제한없음)")) {
-                대상 = "";
+            // 참여대상 리스트 (null 체크)
+            List<String> 대상목록 = (selectedTargets != null) ? selectedTargets : new ArrayList<String>();
+
+            // 소요시간 매핑: 텍스트를 숫자로 변환
+            List<Integer> 최대시간목록 = new ArrayList<Integer>();
+            if (selectedTimes != null) {
+                for (String time : selectedTimes) {
+                    if (time != null) {
+                        int 최대시간 = 0;
+                        if (time.contains("5분")) {
+                            최대시간 = 5;
+                        } else if (time.contains("10분")) {
+                            최대시간 = 10;
+                        } else if (time.contains("30분")) {
+                            최대시간 = 30;
+                        } else if (time.contains("60분")) {
+                            최대시간 = 60;
+                        } else if (time.contains("90분")) {
+                            최대시간 = 90;
+                        }
+                        if (최대시간 > 0) {
+                            최대시간목록.add(최대시간);
+                        }
+                    }
+                }
             }
-        }
 
-        // 소요시간 매핑
-        int 최대시간 = 0;
-        if (selectedTime != null) {
-            if (selectedTime.contains("5분")) {
-                최대시간 = 5;
-            } else if (selectedTime.contains("10분")) {
-                최대시간 = 10;
-            } else if (selectedTime.contains("30분")) {
-                최대시간 = 30;
-            } else if (selectedTime.contains("60분")) {
-                최대시간 = 60;
-            } else if (selectedTime.contains("90분")) {
-                최대시간 = 90;
+            List<HashMap<String, String>> results = dbHelper.search(분야목록, null, 대상목록, 최대시간목록);
+
+            if (results == null) {
+                results = new ArrayList<HashMap<String, String>>();
             }
+
+            // 결과 개수 표시
+            final int count = results.size();
+            Log.d("BoothResultsActivity", "검색 결과 개수: " + count);
+            Log.d("BoothResultsActivity", "txtResultCount null 체크: " + (txtResultCount == null));
+            
+            // UI 스레드에서 업데이트
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    if (txtResultCount != null) {
+                        String countText = count + "곳 조회하기";
+                        Log.d("BoothResultsActivity", "텍스트 설정: " + countText);
+                        txtResultCount.setText(countText);
+                        txtResultCount.setVisibility(View.VISIBLE);
+                        Log.d("BoothResultsActivity", "텍스트 실제 설정 후: " + txtResultCount.getText().toString());
+                    } else {
+                        Log.e("BoothResultsActivity", "txtResultCount가 null입니다!");
+                    }
+                }
+            });
+
+            if (results.isEmpty()) {
+                Toast.makeText(this, "검색 결과가 없습니다.", Toast.LENGTH_SHORT).show();
+            }
+
+            adapter.updateData(results);
+        } catch (Exception e) {
+            e.printStackTrace();
+            Toast.makeText(this, "검색 중 오류가 발생했습니다.", Toast.LENGTH_SHORT).show();
         }
-
-        List<HashMap<String, String>> results = dbHelper.search(분야, null, 대상, 최대시간);
-
-        if (results.isEmpty()) {
-            Toast.makeText(this, "검색 결과가 없습니다.", Toast.LENGTH_SHORT).show();
-        }
-
-        adapter.updateData(results);
     }
 }
 

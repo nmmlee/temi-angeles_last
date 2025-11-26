@@ -9,6 +9,17 @@
     android:orientation="vertical"
     android:padding="20dp">
 
+    <!-- 뒤로가기 버튼 -->
+    <ImageButton
+        android:id="@+id/backButton"
+        android:layout_width="58dp"
+        android:layout_height="54dp"
+        android:layout_gravity="start"
+        android:background="@android:color/transparent"
+        android:contentDescription="뒤로가기"
+        android:padding="4dp"
+        android:src="@drawable/ic_main_backward" />
+
     <!-- 제목 -->
     <TextView
         android:layout_width="wrap_content"
@@ -25,7 +36,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="20dp"
-        android:text="원하시는 조건을 선택하여 부스를 찾아보세요"
+        android:text="원하시는 조건을 선택하여 부스를 찾아보세요(사전모집 제외)"
         android:textColor="#2B87F4"
         android:textSize="24sp" />
 
@@ -83,7 +94,7 @@
                         android:layout_marginBottom="8dp"
                         android:backgroundTint="@null"
                         android:background="@drawable/button_unselected_selector"
-                        android:text="전국민 대상"
+                        android:text="초등학생 이상"
                         android:textSize="20sp"
                         android:textStyle="bold"
                         android:textColor="#2B87F4"/>
@@ -97,7 +108,7 @@
                         android:background="@drawable/button_unselected_selector"
                         android:textSize="20sp"
                         android:textStyle="bold"
-                        android:text="초등학생 이상"
+                        android:text="초등학생(고학년)이상"
                         android:textColor="#2B87F4" />
 
                     <Button
@@ -121,7 +132,7 @@
                         android:background="@drawable/button_unselected_selector"
                         android:textSize="20sp"
                         android:textStyle="bold"
-                        android:text="초·중·고 학생 및 일반 관람객"
+                        android:text="고등학생 이상"
                         android:textColor="#2B87F4" />
 
                     <Button
@@ -132,7 +143,7 @@
                         android:background="@drawable/button_unselected_selector"
                         android:textSize="20sp"
                         android:textStyle="bold"
-                        android:text="누구나(제한없음)"
+                        android:text="누구나"
                         android:textColor="#2B87F4" />
                 </LinearLayout>
             </ScrollView>
@@ -185,7 +196,7 @@
                         android:background="@drawable/button_unselected_selector"
                         android:textSize="20sp"
                         android:textStyle="bold"
-                        android:text="5분 내외"
+                        android:text="5분 이내"
                         android:textColor="#2B87F4" />
 
                     <Button
@@ -197,7 +208,7 @@
                         android:background="@drawable/button_unselected_selector"
                         android:textSize="20sp"
                         android:textStyle="bold"
-                        android:text="10분 내외"
+                        android:text="10분 이내"
                         android:textColor="#2B87F4" />
 
                     <Button
@@ -209,7 +220,7 @@
                         android:background="@drawable/button_unselected_selector"
                         android:textSize="20sp"
                         android:textStyle="bold"
-                        android:text="30분 내외"
+                        android:text="30분 이내"
                         android:textColor="#2B87F4" />
 
                     <Button
@@ -221,7 +232,7 @@
                         android:background="@drawable/button_unselected_selector"
                         android:textSize="20sp"
                         android:textStyle="bold"
-                        android:text="60분 내외"
+                        android:text="60분 이내"
                         android:textColor="#2B87F4" />
 
                     <Button
@@ -232,7 +243,7 @@
                         android:background="@drawable/button_unselected_selector"
                         android:textSize="20sp"
                         android:textStyle="bold"
-                        android:text="90분 내외"
+                        android:text="90분 이내"
                         android:textColor="#2B87F4" />
                 </LinearLayout>
             </ScrollView>
@@ -256,14 +267,30 @@
                 android:layout_marginBottom="8dp"
                 android:src="@drawable/ic_department"/>
 
-            <TextView
-                android:layout_width="wrap_content"
+            <RelativeLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="16dp"
-                android:text="분야"
-                android:textColor="#2B87F4"
-                android:textSize="16sp"
-                android:textStyle="bold" />
+                android:layout_marginBottom="16dp">
+                
+                <TextView
+                    android:id="@+id/textFieldTitle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerHorizontal="true"
+                    android:text="분야"
+                    android:textColor="#2B87F4"
+                    android:textSize="16sp"
+                    android:textStyle="bold" />
+                
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:layout_centerVertical="true"
+                    android:text="아래로 스크롤 해보세요!"
+                    android:textColor="#2B87F4"
+                    android:textSize="12sp" />
+            </RelativeLayout>
 
             <!-- 스크롤이 필요한 영역 -->
             <ScrollView

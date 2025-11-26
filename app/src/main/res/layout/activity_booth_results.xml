@@ -10,13 +10,12 @@
     <!-- 제목 -->
     <TextView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="주요 부스 안내"
-        android:textColor="#243B5A"
-        android:textSize="24sp"
-        android:textStyle="bold"
+        android:layout_height="70dp"
         android:gravity="center"
-        android:padding="24dp" />
+        android:text="주요 부스 안내"
+        android:textColor="#1B7EF4"
+        android:textSize="36sp"
+        android:textStyle="bold" />
 
     <!-- 선택한 필터 표시 -->
     <LinearLayout
@@ -25,20 +24,34 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:gravity="center"
-        android:paddingHorizontal="16dp"
+        android:paddingLeft="16dp"
+        android:paddingRight="16dp"
         android:paddingBottom="16dp">
 
         <!-- 필터 버튼들이 동적으로 추가됨 -->
     </LinearLayout>
 
+    <!-- 결과 개수 표시 -->
+    <TextView
+        android:id="@+id/txtResultCount"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text=""
+        android:textColor="#243B5A"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        android:gravity="center"
+        android:paddingBottom="16dp"
+        android:visibility="visible" />
+
     <!-- 결과 리스트 -->
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerBooths"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
+        android:layout_height="586dp"
         android:layout_weight="1"
-        android:padding="16dp"
         android:clipToPadding="false"
+        android:padding="16dp"
         tools:listitem="@layout/item_booth_card" />
 
     <!-- 뒤로 가기 버튼 -->

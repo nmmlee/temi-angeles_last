@@ -2,6 +2,9 @@ package com.example.temidummyapp;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.AssetManager;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,6 +15,8 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.HashMap;
 import java.util.List;
 
@@ -40,9 +45,18 @@ public class BoothCardAdapter extends RecyclerView.Adapter<BoothCardAdapter.View
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        HashMap<String, String> item = boothList.get(position);
+        try {
+            if (boothList == null || position < 0 || position >= boothList.size()) {
+                return;
+            }
+            
+            HashMap<String, String> item = boothList.get(position);
+            if (item == null) {
+                return;
+            }
 
         // 데이터 추출
+        String field = item.containsKey("분야") ? item.get("분야") : "";
         String title = item.containsKey("대제목") ? item.get("대제목") : "";
         String description = item.containsKey("한줄소개") ? item.get("한줄소개") : "";
         String target = item.containsKey("참여대상") ? item.get("참여대상") : "";
@@ -51,6 +65,7 @@ public class BoothCardAdapter extends RecyclerView.Adapter<BoothCardAdapter.View
         String time = item.containsKey("소요시간") ? item.get("소요시간") : "";
         String period = item.containsKey("체험기간") ? item.get("체험기간") : "";
         String experienceTime = item.containsKey("체험시간") ? item.get("체험시간") : "";
+        String imageFile = item.containsKey("이미지파일") ? item.get("이미지파일") : "";
         final String url = item.containsKey("url") ? item.get("url") : "";
 
         // 데이터 검증: 참여대상 필드에 "현장접수"나 "사전모집" 같은 값이 들어있으면 제거
@@ -112,8 +127,40 @@ public class BoothCardAdapter extends RecyclerView.Adapter<BoothCardAdapter.View
             holder.textDateTime.setVisibility(View.GONE);
         }
 
-        // 이미지는 기본적으로 표시 (나중에 이미지 로딩 추가 가능)
-        holder.imageBooth.setImageResource(R.drawable.ic_temibot);
+        // 분야 표시
+        if (field != null && field.length() > 0 && !field.trim().isEmpty()) {
+            holder.textField.setText(field);
+            holder.textField.setVisibility(View.VISIBLE);
+        } else {
+            holder.textField.setVisibility(View.GONE);
+        }
+
+        // 이미지 로딩: assets/BoothImage 폴더에서 로딩
+        if (imageFile != null && !imageFile.trim().isEmpty()) {
+            try {
+                AssetManager assetManager = context.getAssets();
+                // assets/BoothImage/파일명 형식으로 경로 구성
+                String imagePath = "BoothImage/" + imageFile;
+                
+                InputStream is = assetManager.open(imagePath);
+                Bitmap bitmap = BitmapFactory.decodeStream(is);
+                is.close();
+                
+                if (bitmap != null) {
+                    holder.imageBooth.setImageBitmap(bitmap);
+                } else {
+                    // 이미지 로드 실패 시 기본 이미지 사용
+                    holder.imageBooth.setImageResource(R.drawable.ic_temibot);
+                }
+            } catch (IOException e) {
+                // 이미지를 찾을 수 없으면 기본 이미지 사용
+                e.printStackTrace();
+                holder.imageBooth.setImageResource(R.drawable.ic_temibot);
+            }
+        } else {
+            // 이미지 파일명이 없으면 기본 이미지 사용
+            holder.imageBooth.setImageResource(R.drawable.ic_temibot);
+        }
 
         // 클릭 시 URL 열기
         holder.itemView.setOnClickListener(new View.OnClickListener() {
@@ -125,6 +172,9 @@ public class BoothCardAdapter extends RecyclerView.Adapter<BoothCardAdapter.View
                 }
             }
         });
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
@@ -135,6 +185,7 @@ public class BoothCardAdapter extends RecyclerView.Adapter<BoothCardAdapter.View
     static class ViewHolder extends RecyclerView.ViewHolder {
         ImageView imageBooth;
         TextView textDateTime;
+        TextView textField;
         TextView textTitle;
         TextView textDescription;
         TextView textTarget;
@@ -144,6 +195,7 @@ public class BoothCardAdapter extends RecyclerView.Adapter<BoothCardAdapter.View
             super(itemView);
             imageBooth = itemView.findViewById(R.id.imageBooth);
             textDateTime = itemView.findViewById(R.id.textDateTime);
+            textField = itemView.findViewById(R.id.textField);
             textTitle = itemView.findViewById(R.id.textTitle);
             textDescription = itemView.findViewById(R.id.textDescription);
             textTarget = itemView.findViewById(R.id.textTarget);
