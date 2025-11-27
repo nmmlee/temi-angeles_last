@@ -36,9 +36,6 @@ public class MainActivity extends BaseActivity implements OnGoToLocationStatusCh
     private String currentDestination;
     private boolean wasDragged = false;
     private View adminPanel; // 포함된 관리자 패널 루트
-    private View mapPanel; // 길찾기 맵 패널 루트
-    private boolean debugOutline = false;
-    private boolean mapBitmapLoaded = false;
     private ImageView character; // 챗봇 아이콘
     private static final int PERMISSION_REQUEST_RECORD_AUDIO = 1001;
     private TextView btnWakeWord; // Wake Word 토글 버튼
@@ -91,44 +88,6 @@ public class MainActivity extends BaseActivity implements OnGoToLocationStatusCh
                     }
                 });
             }
-        }
-
-        // 맵 패널 루트
-        mapPanel = findViewById(R.id.map_panel);
-        if (mapPanel == null) {
-            View incMap = findViewById(R.id.include_map_panel);
-            if (incMap != null) {
-                mapPanel = incMap;
-            }
-        }
-        if (mapPanel != null) {
-            View backButton = mapPanel.findViewById(R.id.backButton);
-            View mapTitle = mapPanel.findViewById(R.id.map_title);
-            
-            // 뒤로가기 버튼 클릭 리스너
-            if (backButton != null) {
-                backButton.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        mapPanel.setVisibility(View.GONE);
-                        showCharacterIcon(); // 맵 패널 닫을 때 챗봇 아이콘 다시 표시
-                    }
-                });
-            }
-            
-            if (mapTitle != null) {
-                mapTitle.setOnLongClickListener(new View.OnLongClickListener() {
-                    @Override
-                    public boolean onLongClick(View v) {
-                        debugOutline = !debugOutline;
-                        applyDebugOutline();
-                        String message = debugOutline ? getString(R.string.debug_outline_on) : getString(R.string.debug_outline_off);
-                        Toast.makeText(MainActivity.this, message, Toast.LENGTH_SHORT).show();
-                        return true;
-                    }
-                });
-            }
-            wireMapButtons();
         }
 
         // 좌상단 빨간 점(관리자 진입)
@@ -355,116 +314,6 @@ public class MainActivity extends BaseActivity implements OnGoToLocationStatusCh
         }
         AdminMappingStore.save(this, map);
         Toast.makeText(this, "저장되었습니다.", Toast.LENGTH_SHORT).show();
-    }
-
-    private void showMapPanel() {
-        if (mapPanel != null) {
-            // 실행 시에는 기본적으로 투명하게 (윤곽 OFF)
-            debugOutline = false;
-            mapPanel.setVisibility(View.VISIBLE);
-            applyDebugOutline();
-            ensureMapBitmapLoaded();
-            hideCharacterIcon(); // 맵 패널 표시 시 챗봇 아이콘 숨기기
-        } else {
-            // 폴백: 기존 위치 선택 다이얼로그
-            showLocationPicker();
-        }
-    }
-
-    private void wireMapButtons() {
-        if (mapPanel == null) return;
-        View container = mapPanel.findViewById(R.id.map_container);
-        if (container == null) container = mapPanel;
-        View.OnClickListener l = new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                String resName = v.getResources().getResourceEntryName(v.getId());
-                java.util.Map<String,String> map = AdminMappingStore.load(MainActivity.this);
-                String location = map.get(resName);
-                if (location == null || location.length() == 0) {
-                    Toast.makeText(MainActivity.this, getString(R.string.admin_location_not_set), Toast.LENGTH_SHORT).show();
-                    return;
-                }
-                TtsRequest tts = TtsRequest.create(getString(R.string.navigation_start), false);
-                robot.speak(tts);
-                startNavigation(location);
-            }
-        };
-        for (int i = 1; i <= 21; i++) {
-            String idName = String.format(java.util.Locale.US, "btn_%02d", i);
-            int id = getResources().getIdentifier(idName, "id", getPackageName());
-            if (id != 0) {
-                View b = container.findViewById(id);
-                if (b != null) b.setOnClickListener(l);
-            }
-        }
-    }
-
-    private void applyDebugOutline() {
-        if (mapPanel == null) return;
-        int debugBg = debugOutline ? 0x3333AAFF : android.graphics.Color.TRANSPARENT;
-        View container = mapPanel.findViewById(R.id.map_container);
-        if (container == null) container = mapPanel;
-        for (int i = 1; i <= 21; i++) {
-            String idName = String.format(java.util.Locale.US, "btn_%02d", i);
-            int id = getResources().getIdentifier(idName, "id", getPackageName());
-            if (id != 0) {
-                View b = container.findViewById(id);
-                if (b != null) {
-                    b.setBackgroundColor(debugBg);
-                }
-            }
-        }
-    }
-
-    // ===== 큰 맵 이미지를 화면 크기에 맞게 다운샘플링해서 로드 =====
-    private void ensureMapBitmapLoaded() {
-        if (mapPanel == null || mapBitmapLoaded) return;
-        final ImageView mapImage = mapPanel.findViewById(R.id.map_image);
-        if (mapImage == null) return;
-        mapImage.post(new Runnable() {
-            @Override
-            public void run() {
-                if (mapBitmapLoaded) return;
-                int targetW = mapImage.getWidth();
-                int targetH = mapImage.getHeight();
-                if (targetW <= 0 || targetH <= 0) return;
-                android.graphics.Bitmap bitmap = decodeSampledBitmapFromResource(
-                        getResources(), R.drawable.map, targetW, targetH);
-                if (bitmap != null) {
-                    mapImage.setImageBitmap(bitmap);
-                    mapBitmapLoaded = true;
-                }
-            }
-        });
-    }
-
-    private static android.graphics.Bitmap decodeSampledBitmapFromResource(android.content.res.Resources res, int resId, int reqWidth, int reqHeight) {
-        final android.graphics.BitmapFactory.Options options = new android.graphics.BitmapFactory.Options();
-        options.inJustDecodeBounds = true;
-        android.graphics.BitmapFactory.decodeResource(res, resId, options);
-        options.inSampleSize = calculateInSampleSize(options, reqWidth, reqHeight);
-        options.inPreferredConfig = android.graphics.Bitmap.Config.RGB_565; // 메모리 절약
-        options.inJustDecodeBounds = false;
-        try {
-            return android.graphics.BitmapFactory.decodeResource(res, resId, options);
-        } catch (OutOfMemoryError e) {
-            return null;
-        }
-    }
-
-    private static int calculateInSampleSize(android.graphics.BitmapFactory.Options options, int reqWidth, int reqHeight) {
-        int height = options.outHeight;
-        int width = options.outWidth;
-        int inSampleSize = 1;
-        if (height > reqHeight || width > reqWidth) {
-            final int halfHeight = height / 2;
-            final int halfWidth = width / 2;
-            while ((halfHeight / inSampleSize) >= reqHeight && (halfWidth / inSampleSize) >= reqWidth) {
-                inSampleSize *= 2;
-            }
-        }
-        return inSampleSize;
     }
 
     @Override

@@ -493,10 +493,4 @@
         layout="@layout/panel_admin_mapping"
         android:visibility="gone"/>
 
-    <!-- 길찾기 맵 패널 (초기 숨김) -->
-    <include
-        android:id="@+id/include_map_panel"
-        layout="@layout/panel_map_navigation"
-        android:visibility="gone"/>
-
 </androidx.constraintlayout.widget.ConstraintLayout>
