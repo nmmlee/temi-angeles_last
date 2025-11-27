@@ -26,6 +26,8 @@ import java.util.Locale;
 import android.content.res.Configuration;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.animation.ObjectAnimator;
+import android.animation.ValueAnimator;
 
 public class MainActivity extends BaseActivity implements OnGoToLocationStatusChangedListener, OnRobotDragStateChangedListener {
 
@@ -193,7 +195,7 @@ public class MainActivity extends BaseActivity implements OnGoToLocationStatusCh
         }
 
         // [1124] 하민용 임시 작업 textViewWeMeet 클릭 → QR 안내 화면 이동
-        CardView cardEvent = findViewById(R.id.card_main_event);
+        CardView cardEvent = findViewById(R.id.card_event);
         if (cardEvent != null) {
             cardEvent.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -202,6 +204,29 @@ public class MainActivity extends BaseActivity implements OnGoToLocationStatusCh
                     startActivity(intent);
                 }
             });
+        }
+
+        // 말풍선 애니메이션 시작
+        startMessageBoxAnimation();
+    }
+
+    /**
+     * 말풍선이 위아래로 움직이는 애니메이션 (0dp ~ -10dp 범위)
+     */
+    private void startMessageBoxAnimation() {
+        View messageBoxContainer = findViewById(R.id.message_box_container);
+        if (messageBoxContainer != null) {
+            // 0dp에서 -10dp까지 위로 이동 (translationY: 0 -> -10)
+            ObjectAnimator animator = ObjectAnimator.ofFloat(
+                    messageBoxContainer,
+                    "translationY",
+                    0f,
+                    -10f
+            );
+            animator.setDuration(1500); // 1.5초 동안 이동
+            animator.setRepeatCount(ValueAnimator.INFINITE); // 무한 반복
+            animator.setRepeatMode(ValueAnimator.REVERSE); // 왕복 (0 -> -10 -> 0)
+            animator.start();
         }
     }
 
