@@ -42,6 +42,15 @@ public class WakeWordService {
 
             String accessKey = BuildConfig.PICOVOICE_ACCESS_KEY;
             Log.i(TAG, "AccessKey: " + accessKey.substring(0, Math.min(10, accessKey.length())) + "...");
+            
+            // 기기 정보 출력 (디버깅용)
+            Log.i(TAG, "📱 Device Info:");
+            Log.i(TAG, "   - Manufacturer: " + android.os.Build.MANUFACTURER);
+            Log.i(TAG, "   - Model: " + android.os.Build.MODEL);
+            Log.i(TAG, "   - Device: " + android.os.Build.DEVICE);
+            Log.i(TAG, "   - Android ID: " + android.provider.Settings.Secure.getString(
+                    context.getContentResolver(), 
+                    android.provider.Settings.Secure.ANDROID_ID));
 
             // assets 폴더의 모든 파일 목록 확인 (디버깅용)
             try {
