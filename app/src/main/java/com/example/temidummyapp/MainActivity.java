@@ -35,7 +35,6 @@ public class MainActivity extends BaseActivity implements OnGoToLocationStatusCh
     private AlertDialog navigatingDialog;
     private String currentDestination;
     private boolean wasDragged = false;
-    private View adminPanel; // 포함된 관리자 패널 루트
     private ImageView character; // 챗봇 아이콘
     private static final int PERMISSION_REQUEST_RECORD_AUDIO = 1001;
     private TextView btnWakeWord; // Wake Word 토글 버튼
@@ -59,36 +58,6 @@ public class MainActivity extends BaseActivity implements OnGoToLocationStatusCh
         // 텍스트 설정
         TextView title = findViewById(R.id.title);
         title.setText(R.string.temi_title);
-
-        // include로 들어온 관리자 패널 루트
-        adminPanel = findViewById(R.id.admin_panel);
-        if (adminPanel == null) { // include 루트 id를 직접 찾을 수 없으면 include id로 대체 탐색
-            View inc = findViewById(R.id.include_admin_panel);
-            if (inc != null) {
-                adminPanel = inc;
-            }
-        }
-        if (adminPanel != null) {
-            View close = adminPanel.findViewById(R.id.admin_close);
-            if (close != null) {
-                close.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        adminPanel.setVisibility(View.GONE);
-                        showCharacterIcon(); // 관리자 패널 닫을 때 챗봇 아이콘 다시 표시
-                    }
-                });
-            }
-            View save = adminPanel.findViewById(R.id.admin_save);
-            if (save != null) {
-                save.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        saveAdminMappings();
-                    }
-                });
-            }
-        }
 
         // 좌상단 빨간 점(관리자 진입)
         View adminDot = findViewById(R.id.btn_admin);
@@ -224,7 +193,9 @@ public class MainActivity extends BaseActivity implements OnGoToLocationStatusCh
                     String pin = display.getTag() != null ? display.getTag().toString() : "";
                     if (pin.equals(BuildConfig.ADMIN_PIN)) {
                         dialog.dismiss();
-                        showAdminOverlay();
+                        // 관리자 Activity로 이동
+                        Intent intent = new Intent(MainActivity.this, AdminActivity.class);
+                        startActivity(intent);
                     } else {
                         Toast.makeText(MainActivity.this, "PIN이 올바르지 않습니다.", Toast.LENGTH_SHORT).show();
                     }
@@ -262,58 +233,6 @@ public class MainActivity extends BaseActivity implements OnGoToLocationStatusCh
             );
             dialog.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE);
         }
-    }
-
-    private void showAdminOverlay() {
-        if (adminPanel != null) {
-            setupAdminRecycler();
-            adminPanel.setVisibility(View.VISIBLE);
-            hideCharacterIcon(); // 관리자 패널 표시 시 챗봇 아이콘 숨기기
-        } else {
-            Toast.makeText(this, "관리자 패널을 표시할 수 없습니다.", Toast.LENGTH_SHORT).show();
-        }
-    }
-
-    private void setupAdminRecycler() {
-        android.view.View rvv = adminPanel.findViewById(R.id.recyclerMappings);
-        if (!(rvv instanceof androidx.recyclerview.widget.RecyclerView)) return;
-        androidx.recyclerview.widget.RecyclerView rv = (androidx.recyclerview.widget.RecyclerView) rvv;
-        rv.setLayoutManager(new androidx.recyclerview.widget.LinearLayoutManager(this));
-        java.util.ArrayList<String> ids = new java.util.ArrayList<>();
-        for (int i = 1; i <= 21; i++) {
-            ids.add(String.format(java.util.Locale.US, "btn_%02d", i));
-        }
-        java.util.List<String> temiLocations = getTemiLocationsSafe();
-        java.util.Map<String,String> saved = AdminMappingStore.load(this);
-        AdminMappingAdapter adapter = new AdminMappingAdapter(this, ids, saved, temiLocations);
-        rv.setAdapter(adapter);
-        rv.setTag(adapter);
-    }
-
-    private java.util.List<String> getTemiLocationsSafe() {
-        try {
-            java.util.List<String> list = robot != null ? robot.getLocations() : null;
-            return list != null ? list : new java.util.ArrayList<String>();
-        } catch (Exception e) {
-            return new java.util.ArrayList<String>();
-        }
-    }
-
-    private void saveAdminMappings() {
-        android.view.View rvv = adminPanel.findViewById(R.id.recyclerMappings);
-        if (!(rvv instanceof androidx.recyclerview.widget.RecyclerView)) return;
-        androidx.recyclerview.widget.RecyclerView rv = (androidx.recyclerview.widget.RecyclerView) rvv;
-        Object tag = rv.getTag();
-        if (!(tag instanceof AdminMappingAdapter)) return;
-        AdminMappingAdapter adapter = (AdminMappingAdapter) tag;
-        java.util.HashMap<String,String> map = new java.util.HashMap<>();
-        for (AdminMappingAdapter.Item it : adapter.getItems()) {
-            if (it.location != null && it.location.length() > 0) {
-                map.put(it.buttonId, it.location);
-            }
-        }
-        AdminMappingStore.save(this, map);
-        Toast.makeText(this, "저장되었습니다.", Toast.LENGTH_SHORT).show();
     }
 
     @Override

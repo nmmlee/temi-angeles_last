@@ -107,6 +107,12 @@
             android:exported="false"
             android:screenOrientation="landscape" />
 
+        <!-- ✅ 관리자 설정 Activity 등록 -->
+        <activity
+            android:name=".AdminActivity"
+            android:exported="false"
+            android:screenOrientation="landscape" />
+
         <!-- ✅ Temi Skill 등록 (이 부분 추가) -->
         <meta-data
             android:name="com.robotemi.sdk.metadata.SKILL"

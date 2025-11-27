@@ -487,10 +487,4 @@
             android:src="@drawable/ic_temibot"/>
     </LinearLayout>
 
-    <!-- 관리자 설정 패널 (초기 숨김) -->
-    <include
-        android:id="@+id/include_admin_panel"
-        layout="@layout/panel_admin_mapping"
-        android:visibility="gone"/>
-
 </androidx.constraintlayout.widget.ConstraintLayout>
