@@ -11,17 +11,10 @@ public class TemiApplication extends Application {
     public void onCreate() {
         super.onCreate();
         
-        // Wake Word 서비스 초기화
+        // Wake Word 서비스 초기화만 수행 (자동 시작 안 함)
+        // MainActivity의 "테미야" 버튼으로만 제어됨
         wakeWordService = new WakeWordService(this);
-        
-        // 앱 시작 시 Wake Word 감지 시작
-        startWakeWordDetection();
-    }
-    
-    private void startWakeWordDetection() {
-        // 권한 체크는 MainActivity에서 수행하므로 여기서는 초기화만 수행
-        // 실제 시작은 권한이 허용된 후 MainActivity에서 호출됨
-        Log.d(TAG, "Wake word service created (will start after permission granted)");
+        Log.d(TAG, "Wake word service created (controlled by MainActivity toggle button)");
     }
     
     public WakeWordService getWakeWordService() {

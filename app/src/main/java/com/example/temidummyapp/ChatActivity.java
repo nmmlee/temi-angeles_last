@@ -346,7 +346,7 @@ public class ChatActivity extends BaseActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        startWakeWordService();
+        // Wake Word는 MainActivity에서만 제어됨 (자동 재시작 안 함)
 
         // STT 서비스 리소스 해제
         if (sttService != null) {
@@ -417,18 +417,18 @@ public class ChatActivity extends BaseActivity {
     private void setupSTT() {
         // 배치 방식 STT 서비스
         sttService = new SpeechToTextService(this);
-        
+
         // 실시간 방식 STT 서비스
         realtimeSTTService = new RealtimeSTTService(this);
-        
+
         // OpenAI API 키를 BuildConfig에서 가져와 두 서비스 모두에 설정
         String apiKey = BuildConfig.OPENAI_API_KEY;
         sttService.setApiKey(apiKey);
         realtimeSTTService.setApiKey(apiKey);
-        
+
         // STT 모드 토글 버튼 설정
         setupSTTModeButtons();
-        
+
         Log.d(TAG, "STT 서비스 초기화 완료 (배치 + 실시간)");
     }
 
@@ -507,14 +507,89 @@ public class ChatActivity extends BaseActivity {
             return;
         }
 
-        // 녹음 시작
-        boolean started = sttService.startRecording();
-        if (started) {
-            // 듣기 모드 오버레이 표시
-            listeningOverlay.setVisibility(View.VISIBLE);
-            Log.d(TAG, "음성 듣기 시작됨");
+        // 현재 STT 모드에 따라 다른 서비스 사용
+        if (currentSTTMode == STTMode.REALTIME) {
+            startRealtimeListening();
         } else {
+            startBatchListening();
+        }
+    }
+
+    /**
+     * 실시간 입력 모드 시작
+     */
+    private void startRealtimeListening() {
+        Log.d(TAG, "실시간 입력 모드 시작");
+
+        // 텍스트 버퍼 초기화
+        realtimeTextBuffer.setLength(0);
+        inputMessage.setText("");
+
+        // 듣기 모드 오버레이 표시
+        listeningOverlay.setVisibility(View.VISIBLE);
+        TextView listeningText = listeningOverlay.findViewById(R.id.listening_text);
+        TextView listeningInstruction = listeningOverlay.findViewById(R.id.listening_instruction);
+        listeningText.setText("실시간으로 듣고 있습니다");
+        listeningInstruction.setText("화면을 터치하여 메시지 보내기");
+
+        // 실시간 STT 시작
+        realtimeSTTService.startRealtimeSTT(new RealtimeSTTService.RealtimeCallback() {
+            @Override
+            public void onConnectionReady() {
+                Log.d(TAG, "실시간 STT 연결 준비 완료");
+            }
+
+            @Override
+            public void onTextDelta(String deltaText) {
+                // 실시간으로 입력창에 텍스트 추가
+                Log.d(TAG, "실시간 텍스트 델타: " + deltaText);
+                realtimeTextBuffer.append(deltaText);
+                inputMessage.setText(realtimeTextBuffer.toString());
+
+                // 커서를 끝으로 이동
+                inputMessage.setSelection(inputMessage.getText().length());
+            }
+
+            @Override
+            public void onTextComplete(String fullText) {
+                Log.d(TAG, "실시간 텍스트 완성: " + fullText);
+                // 최종 텍스트로 업데이트
+                if (!fullText.isEmpty()) {
+                    inputMessage.setText(fullText);
+                }
+            }
+
+            @Override
+            public void onError(String error) {
+                Log.e(TAG, "실시간 STT 오류: " + error);
+
+                // 오버레이 숨기기
+                listeningOverlay.setVisibility(View.GONE);
+
+                // 에러 메시지 표시
+                Toast.makeText(ChatActivity.this, "음성 인식 오류: " + error, Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    /**
+     * 다 듣고 입력 모드 시작 (기존 배치 방식)
+     */
+    private void startBatchListening() {
+        Log.d(TAG, "다 듣고 입력 모드 시작");
+
+        // 듣기 모드 오버레이 표시
+        listeningOverlay.setVisibility(View.VISIBLE);
+        TextView listeningText = listeningOverlay.findViewById(R.id.listening_text);
+        TextView listeningInstruction = listeningOverlay.findViewById(R.id.listening_instruction);
+        listeningText.setText("듣고 있습니다");
+        listeningInstruction.setText("화면을 터치하여 메시지 보내기");
+
+        // 배치 방식 녹음 시작
+        boolean started = sttService.startRecording();
+        if (!started) {
             Toast.makeText(this, "음성 녹음을 시작할 수 없습니다.", Toast.LENGTH_SHORT).show();
+            listeningOverlay.setVisibility(View.GONE);
         }
     }
 

@@ -618,13 +618,21 @@ public class MainActivity extends BaseActivity implements OnGoToLocationStatusCh
         btnWakeWord = findViewById(R.id.btn_wake_word);
         if (btnWakeWord == null) return;
 
-        // 초기 상태는 비활성화
+        // 초기 상태는 비활성화 (사용자가 직접 ON 해야 함)
         isWakeWordEnabled = false;
         updateWakeWordButtonUI();
 
         btnWakeWord.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                // 마이크 권한 확인
+                if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
+                    if (checkSelfPermission(android.Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED) {
+                        requestPermissions(new String[] { android.Manifest.permission.RECORD_AUDIO },
+                                PERMISSION_REQUEST_RECORD_AUDIO);
+                        return;
+                    }
+                }
                 toggleWakeWord();
             }
         });
@@ -680,6 +688,41 @@ public class MainActivity extends BaseActivity implements OnGoToLocationStatusCh
         if (service != null && service.isListening()) {
             service.stopListening();
             Log.d("MainActivity", "Wake Word 감지 중지");
+        }
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        // MainActivity를 떠날 때 Wake Word 중지
+        if (isWakeWordEnabled) {
+            stopWakeWordService();
+            Log.d("MainActivity", "MainActivity 일시정지 - Wake Word 중지");
+        }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        // MainActivity로 돌아올 때 버튼이 ON 상태였으면 다시 시작
+        if (isWakeWordEnabled) {
+            startWakeWordService();
+            Log.d("MainActivity", "MainActivity 재개 - Wake Word 재시작");
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+
+        if (requestCode == PERMISSION_REQUEST_RECORD_AUDIO) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                // 권한 승인됨 - Wake Word 토글 시도
+                toggleWakeWord();
+            } else {
+                // 권한 거부됨
+                Toast.makeText(this, "Wake Word를 사용하려면 마이크 권한이 필요합니다.", Toast.LENGTH_SHORT).show();
+            }
         }
     }
 

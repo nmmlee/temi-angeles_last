@@ -36,13 +36,6 @@ public class WakeWordService {
             return;
         }
 
-        // AVD(에뮬레이터) 감지 - 크래시 방지
-        if (isEmulator()) {
-            Log.w(TAG, "⚠️ Running on emulator - Wake Word disabled for stability");
-            showToast("⚠️ 에뮬레이터에서는 Wake Word가 비활성화됩니다");
-            return;
-        }
-
         try {
             Log.i(TAG, "=== Wake Word Service 초기화 시작 ===");
             Log.i(TAG, "Keyword file: " + KEYWORD_FILE);
@@ -201,18 +194,5 @@ public class WakeWordService {
 
     public void release() {
         stopListening();
-    }
-
-    // 에뮬레이터 감지 메서드
-    private boolean isEmulator() {
-        return android.os.Build.FINGERPRINT.contains("generic")
-                || android.os.Build.FINGERPRINT.contains("unknown")
-                || android.os.Build.MODEL.contains("google_sdk")
-                || android.os.Build.MODEL.contains("Emulator")
-                || android.os.Build.MODEL.contains("Android SDK")
-                || android.os.Build.MANUFACTURER.contains("Genymotion")
-                || android.os.Build.BRAND.startsWith("generic")
-                || android.os.Build.DEVICE.startsWith("generic")
-                || android.os.Build.PRODUCT.contains("sdk");
     }
 }

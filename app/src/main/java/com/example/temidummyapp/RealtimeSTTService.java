@@ -26,7 +26,7 @@ import okhttp3.WebSocketListener;
  */
 public class RealtimeSTTService {
     private static final String TAG = "RealtimeSTTService";
-    private static final String WS_URL = "wss://api.openai.com/v1/realtime?intent=transcription&model=gpt-4o-mini-transcribe";
+    private static final String WS_URL = "wss://api.openai.com/v1/realtime?model=gpt-4o-realtime-preview-2024-10-01";
     
     // 오디오 설정
     private static final int SAMPLE_RATE = 24000; // 24kHz (Realtime API 요구사항)
@@ -128,7 +128,7 @@ public class RealtimeSTTService {
             JSONObject session = new JSONObject();
             session.put("input_audio_format", "pcm16");
             session.put("input_audio_transcription", new JSONObject()
-                    .put("model", "gpt-4o-mini-transcribe"));
+                    .put("model", "whisper-1"));
             
             // VAD (Voice Activity Detection) 설정
             session.put("turn_detection", new JSONObject()

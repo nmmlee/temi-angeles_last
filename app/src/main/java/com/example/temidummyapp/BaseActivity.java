@@ -43,8 +43,7 @@ public class BaseActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        // Activity가 다시 활성화될 때 Wake Word 서비스가 실행 중인지 확인
-        ensureWakeWordServiceRunning();
+        // Wake Word는 MainActivity에서만 제어됨
     }
 
     @Override
@@ -61,32 +60,15 @@ public class BaseActivity extends AppCompatActivity {
             ActivityCompat.requestPermissions(this,
                     new String[]{Manifest.permission.RECORD_AUDIO},
                     PERMISSION_REQUEST_RECORD_AUDIO);
-        } else {
-            // 권한이 이미 있으면 Wake Word 서비스 시작
-            ensureWakeWordServiceRunning();
         }
+        // Wake Word는 MainActivity의 토글 버튼으로만 제어됨
     }
 
     @Override
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        if (requestCode == PERMISSION_REQUEST_RECORD_AUDIO) {
-            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                // 권한이 허용되면 Wake Word 서비스 시작
-                ensureWakeWordServiceRunning();
-            }
-        }
-    }
-
-    private void ensureWakeWordServiceRunning() {
-        if (getApplication() instanceof TemiApplication) {
-            TemiApplication app = (TemiApplication) getApplication();
-            if (app != null && app.getWakeWordService() != null) {
-                if (!app.getWakeWordService().isListening()) {
-                    app.getWakeWordService().startListening();
-                }
-            }
-        }
+        // 권한 결과 처리는 각 Activity에서 필요시 오버라이드
+        // Wake Word는 MainActivity에서만 제어됨
     }
 
     // ===== 언어 설정 관리 =====
