@@ -24,7 +24,7 @@ public class CSVLoader {
 
         try {
             // assets 폴더의 CSV 파일 읽기
-            is = context.getAssets().open("booth_program.csv");
+            is = context.getAssets().open("booth_program_image.csv");
             reader = new BufferedReader(new InputStreamReader(is, StandardCharsets.UTF_8));
 
             db.beginTransaction();

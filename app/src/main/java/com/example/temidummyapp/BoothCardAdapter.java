@@ -135,12 +135,12 @@ public class BoothCardAdapter extends RecyclerView.Adapter<BoothCardAdapter.View
             holder.textField.setVisibility(View.GONE);
         }
 
-        // 이미지 로딩: assets/BoothImage 폴더에서 로딩
+        // 이미지 로딩: assets/booth_image 폴더에서 로딩
         if (imageFile != null && !imageFile.trim().isEmpty()) {
             try {
                 AssetManager assetManager = context.getAssets();
-                // assets/BoothImage/파일명 형식으로 경로 구성
-                String imagePath = "BoothImage/" + imageFile;
+                // assets/booth_image/파일명 형식으로 경로 구성
+                String imagePath = "booth_images/" + imageFile;
                 
                 InputStream is = assetManager.open(imagePath);
                 Bitmap bitmap = BitmapFactory.decodeStream(is);
