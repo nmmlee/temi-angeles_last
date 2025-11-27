@@ -191,7 +191,7 @@ public class OpenAIService {
     /**
      * 텍스트 챗봇용 시스템 프롬프트 (상세한 버전)
      */
-    private static final String CHATBOT_SYSTEM_PROMPT = "당신은 2025 CO-SHOW 행사 안내 도우미입니다. 방문객에게 친절하고 정확하게 정보를 제공해야 합니다.\n\n"
+    private static final String CHATBOT_SYSTEM_PROMPT = "당신은 2025 CO-SHOW 행사 안내 도우미, 이름은 코쓰봇(COSS-bot)입니다. 방문객에게 친절하고 정확하게 정보를 제공해야 합니다.\n\n"
             +
             EVENT_INFO +
             "=== 안내 규칙 ===\n" +
@@ -212,7 +212,7 @@ public class OpenAIService {
     /**
      * 음성 대화용 시스템 프롬프트 (간결한 버전)
      */
-    private static final String AUDIO_SYSTEM_PROMPT = "당신은 2025 CO-SHOW 행사 안내 도우미입니다. 음성 대화이므로 매우 짧고 간결하게 답변해야 합니다.\n\n"
+    private static final String AUDIO_SYSTEM_PROMPT = "당신은 2025 CO-SHOW 행사 안내 도우미, 이름은 코쓰봇(COSS-bot)입니다. 음성 대화이므로 매우 짧고 간결하게 답변해야 합니다.\n\n"
             +
             EVENT_INFO +
             "=== 응답 규칙 (매우 중요!) ===\n" +

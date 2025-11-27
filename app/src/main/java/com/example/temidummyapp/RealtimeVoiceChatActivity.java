@@ -28,6 +28,7 @@ public class RealtimeVoiceChatActivity extends BaseActivity {
     private OpenAIRealtimeService realtimeService;
     private boolean isConnected = false;
     private boolean isRecording = false;
+    private boolean isAIResponding = false; // AI가 현재 응답 중인지 플래그
     
     // 현재 활성 메시지 추적
     private VoiceChatMessage currentUserMessage = null;
@@ -83,6 +84,9 @@ public class RealtimeVoiceChatActivity extends BaseActivity {
             btnClose.setEnabled(false);
             instructionText.setText("종료 중...");
             
+            // 🔇 즉시 음소거 (메인 스레드에서 즉시 실행)
+            realtimeService.muteAudioImmediately();
+            
             // 순차적으로 종료
             stopVoiceChatGracefully();
         });
@@ -114,28 +118,44 @@ public class RealtimeVoiceChatActivity extends BaseActivity {
 
             @Override
             public void onTranscriptReceived(String transcript) {
-                Log.d(TAG, "사용자 음성: " + transcript);
+                Log.d(TAG, "📝 사용자 음성 인식: " + transcript);
+                
+                // AI가 응답 중이면 사용자 음성 인식 무시 (에코 방지)
+                if (isAIResponding) {
+                    Log.d(TAG, "⚠️ AI 응답 중 - 사용자 음성 무시 (에코)");
+                    return;
+                }
+                
                 runOnUiThread(() -> {
                     // 사용자 메시지 추가 또는 업데이트
                     if (currentUserMessage == null) {
+                        Log.d(TAG, "➕ 새 사용자 메시지 추가");
                         currentUserMessage = new VoiceChatMessage(transcript, VoiceChatMessage.TYPE_USER);
                         currentUserMessage.setActive(true);
                         conversationAdapter.addMessage(currentUserMessage);
+                        Log.d(TAG, "현재 메시지 수: " + conversationAdapter.getMessageCount());
                     } else {
+                        Log.d(TAG, "🔄 사용자 메시지 업데이트: " + transcript);
                         currentUserMessage.setMessage(transcript);
                         conversationAdapter.updateLastMessage(transcript);
                     }
                     
-                    // 현재 메시지를 중앙으로 스크롤
-                    scrollToCenter(conversationAdapter.getMessageCount() - 1);
+                    // 마지막 메시지로 부드럽게 스크롤
+                    scrollToBottom();
                     
-                    instructionText.setText("듣고 있습니다...");
+                    // AI 응답 중이 아닐 때만 하단 텍스트 업데이트
+                    if (!isAIResponding) {
+                        instructionText.setText("듣고 있습니다...");
+                    }
                 });
             }
 
             @Override
             public void onResponseStarted() {
-                Log.d(TAG, "AI 응답 시작");
+                Log.d(TAG, "🎯 AI 응답 시작");
+                
+                // AI 응답 중 플래그 설정
+                isAIResponding = true;
                 
                 // 🔇 마이크 일시 중지 (에코 방지)
                 realtimeService.pauseMicrophone();
@@ -143,42 +163,50 @@ public class RealtimeVoiceChatActivity extends BaseActivity {
                 runOnUiThread(() -> {
                     // 사용자 메시지 비활성화
                     if (currentUserMessage != null) {
+                        Log.d(TAG, "🔹 사용자 메시지 비활성화");
                         conversationAdapter.clearActiveMessage();
                         currentUserMessage = null;
                     }
                     
                     // 새 AI 메시지 시작
+                    Log.d(TAG, "➕ 새 AI 메시지 추가");
                     currentAIMessage = new VoiceChatMessage("", VoiceChatMessage.TYPE_AI);
                     currentAIMessage.setActive(true);
                     conversationAdapter.addMessage(currentAIMessage);
+                    Log.d(TAG, "현재 메시지 수: " + conversationAdapter.getMessageCount());
                     
                     instructionText.setText("AI가 응답하고 있습니다...");
                     animatedCircle.setSpeakingMode();
+                    
+                    // 마지막 메시지로 스크롤
+                    scrollToBottom();
                 });
             }
 
             @Override
             public void onResponseReceived(String response) {
-                Log.d(TAG, "AI 응답 델타: " + response);
+                Log.d(TAG, "📤 AI 텍스트 델타: " + response);
                 runOnUiThread(() -> {
                     // AI 메시지 실시간 업데이트
                     if (currentAIMessage != null) {
                         String currentText = currentAIMessage.getMessage();
-                        currentAIMessage.setMessage(currentText + response);
-                        conversationAdapter.updateLastMessage(currentAIMessage.getMessage());
+                        String newText = currentText + response;
+                        currentAIMessage.setMessage(newText);
+                        conversationAdapter.updateLastMessage(newText);
+                        Log.d(TAG, "🔄 AI 메시지 업데이트: " + newText.length() + " chars");
                         
-                        // 현재 메시지를 중앙으로 스크롤
-                        scrollToCenter(conversationAdapter.getMessageCount() - 1);
+                        // 마지막 메시지로 스크롤
+                        scrollToBottom();
+                        
+                        // 하단 텍스트를 "답변 중입니다..."로 명확히 표시
+                        instructionText.setText("답변 중입니다...");
                     }
                 });
             }
 
             @Override
             public void onResponseComplete() {
-                Log.d(TAG, "AI 응답 완료");
-                
-                // 🎤 마이크 재개 (사용자 입력 대기)
-                realtimeService.resumeMicrophone();
+                Log.d(TAG, "✅ AI 응답 완료");
                 
                 runOnUiThread(() -> {
                     // AI 메시지 비활성화
@@ -188,7 +216,17 @@ public class RealtimeVoiceChatActivity extends BaseActivity {
                     }
                     
                     animatedCircle.setListeningMode();
-                    instructionText.setText("말씀해주세요");
+                    instructionText.setText("잠시 후 말씀해주세요...");
+                    
+                    // 🎤 1초 후에 마이크 재개 (AI 응답 여운 + 에코 방지)
+                    new android.os.Handler(android.os.Looper.getMainLooper()).postDelayed(() -> {
+                        // AI 응답 중 플래그 해제
+                        isAIResponding = false;
+                        
+                        realtimeService.resumeMicrophone();
+                        instructionText.setText("말씀해주세요");
+                        Log.d(TAG, "🎤 마이크 재개 (1초 딜레이) + AI 응답 플래그 해제");
+                    }, 1000); // 1초 딜레이
                 });
             }
 
@@ -250,9 +288,8 @@ public class RealtimeVoiceChatActivity extends BaseActivity {
             try {
                 Log.d(TAG, "=== 음성 대화 종료 시작 ===");
 
-                // 🔇 0단계: AI 음성 출력 즉시 음소거 (말하는 중이어도 즉시 무음)
-                realtimeService.muteAudioImmediately();
-                Log.d(TAG, "0단계: 오디오 출력 즉시 음소거 완료");
+                // 음소거는 이미 버튼 클릭 시 메인 스레드에서 즉시 실행됨
+                Thread.sleep(100); // 음소거 처리 대기
 
                 // 1단계: 오디오 스트리밍 중지 (녹음 및 재생)
                 if (isRecording || isConnected) {
@@ -326,26 +363,16 @@ public class RealtimeVoiceChatActivity extends BaseActivity {
     }
 
     /**
-     * 특정 메시지를 화면 중앙으로 스크롤
+     * 마지막 메시지로 부드럽게 스크롤
      */
-    private void scrollToCenter(int position) {
-        if (position < 0 || position >= conversationAdapter.getMessageCount()) {
-            return;
+    private void scrollToBottom() {
+        if (conversationAdapter.getMessageCount() > 0) {
+            conversationList.post(() -> {
+                int lastPosition = conversationAdapter.getMessageCount() - 1;
+                conversationList.smoothScrollToPosition(lastPosition);
+                Log.d(TAG, "📜 스크롤: position " + lastPosition);
+            });
         }
-
-        conversationList.post(() -> {
-            androidx.recyclerview.widget.LinearLayoutManager layoutManager = 
-                (androidx.recyclerview.widget.LinearLayoutManager) conversationList.getLayoutManager();
-            
-            if (layoutManager != null) {
-                // RecyclerView 높이의 중앙 위치 계산
-                int listHeight = conversationList.getHeight();
-                int centerOffset = listHeight / 2;
-                
-                // 해당 위치로 스크롤 (중앙 정렬)
-                layoutManager.scrollToPositionWithOffset(position, centerOffset);
-            }
-        });
     }
 
     @Override

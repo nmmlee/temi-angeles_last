@@ -169,10 +169,20 @@ public class OpenAIRealtimeService {
         inputAudioTranscription.addProperty("model", "whisper-1");
         session.add("input_audio_transcription", inputAudioTranscription);
 
-        // VAD (Voice Activity Detection) 비활성화
-        // AI가 사용자의 말을 끝까지 듣고 기다리도록 설정
-        // null로 설정하면 AI가 절대 먼저 말하지 않고 사용자가 말할 때까지 기다림
-        session.add("turn_detection", null);
+        // 응답 최대 토큰 수 설정 (답변이 끊어지지 않도록)
+        session.addProperty("max_response_output_tokens", 4096); // 충분한 답변 길이 확보
+
+        // 온도 설정 (음성 대화용 - 간결하고 일관되게)
+        session.addProperty("temperature", 0.6);
+
+        // VAD (Voice Activity Detection) 설정
+        // 행사장 환경에 최적화 (시끄러운 환경 + 적절한 대기 시간)
+        JsonObject turnDetection = new JsonObject();
+        turnDetection.addProperty("type", "server_vad");
+        turnDetection.addProperty("threshold", 0.75); // 높은 민감도 (소음 필터링 강화)
+        turnDetection.addProperty("prefix_padding_ms", 800); // 발화 시작 전 800ms 패딩 (말 시작 보호)
+        turnDetection.addProperty("silence_duration_ms", 3000); // 3초 침묵 후 턴 종료 (적절한 응답 속도)
+        session.add("turn_detection", turnDetection);
 
         sessionUpdate.add("session", session);
 
@@ -203,16 +213,25 @@ public class OpenAIRealtimeService {
             switch (type) {
                 case "session.created":
                 case "session.updated":
-                    Log.d(TAG, "세션 준비됨");
+                    Log.d(TAG, "✅ 세션 준비됨");
                     break;
 
                 case "conversation.item.input_audio_transcription.completed":
                     // 사용자 음성 인식 결과
                     if (json.has("transcript")) {
                         String transcript = json.get("transcript").getAsString();
+                        Log.d(TAG, "📝 사용자 음성 인식: " + transcript);
                         if (callback != null) {
                             mainHandler.post(() -> callback.onTranscriptReceived(transcript));
                         }
+                    }
+                    break;
+
+                case "response.created":
+                    // AI 응답 생성 시작
+                    Log.d(TAG, "🎯 AI 응답 생성 시작");
+                    if (callback != null) {
+                        mainHandler.post(callback::onResponseStarted);
                     }
                     break;
 
@@ -220,10 +239,16 @@ public class OpenAIRealtimeService {
                     // AI 응답 텍스트 스트림
                     if (json.has("delta")) {
                         String delta = json.get("delta").getAsString();
+                        Log.d(TAG, "📤 AI 텍스트 델타: " + delta);
                         if (callback != null) {
                             mainHandler.post(() -> callback.onResponseReceived(delta));
                         }
                     }
+                    break;
+
+                case "response.audio_transcript.done":
+                    // AI 응답 텍스트 완료
+                    Log.d(TAG, "✅ AI 텍스트 스트리밍 완료");
                     break;
 
                 case "response.audio.delta":
@@ -234,8 +259,14 @@ public class OpenAIRealtimeService {
                     }
                     break;
 
+                case "response.audio.done":
+                    // AI 음성 스트리밍 완료
+                    Log.d(TAG, "🔊 AI 음성 스트리밍 완료");
+                    break;
+
                 case "response.done":
-                    // AI 응답 완료
+                    // AI 응답 완전 완료 (텍스트 + 음성 모두)
+                    Log.d(TAG, "✅ AI 응답 완전 완료");
                     if (callback != null) {
                         mainHandler.post(callback::onResponseComplete);
                     }
@@ -244,13 +275,14 @@ public class OpenAIRealtimeService {
                 case "error":
                     // 오류 발생
                     String error = json.has("error") ? json.get("error").toString() : "Unknown error";
+                    Log.e(TAG, "❌ 오류 발생: " + error);
                     if (callback != null) {
                         mainHandler.post(() -> callback.onError(error));
                     }
                     break;
 
                 default:
-                    Log.d(TAG, "처리되지 않은 메시지 타입: " + type);
+                    Log.d(TAG, "⚠️ 처리되지 않은 메시지 타입: " + type);
                     break;
             }
         } catch (Exception e) {
@@ -359,10 +391,16 @@ public class OpenAIRealtimeService {
     private void playAudioChunk(String audioBase64) {
         try {
             byte[] audioData = Base64.decode(audioBase64, Base64.NO_WRAP);
+            Log.d(TAG, "🔊 오디오 청크 수신: " + audioData.length + " bytes");
 
             if (audioTrack == null) {
-                int bufferSize = AudioTrack.getMinBufferSize(SAMPLE_RATE,
+                int minBufferSize = AudioTrack.getMinBufferSize(SAMPLE_RATE,
                         AudioFormat.CHANNEL_OUT_MONO, AUDIO_FORMAT);
+                
+                // 버퍼 크기를 4배로 늘려서 끊김 방지
+                int bufferSize = minBufferSize * 4;
+                
+                Log.d(TAG, "🎵 AudioTrack 생성 (버퍼: " + bufferSize + " bytes)");
 
                 audioTrack = new AudioTrack(
                         android.media.AudioManager.STREAM_MUSIC,
@@ -373,11 +411,16 @@ public class OpenAIRealtimeService {
                         AudioTrack.MODE_STREAM);
 
                 audioTrack.play();
+                Log.d(TAG, "▶️ AudioTrack 재생 시작");
             }
 
-            audioTrack.write(audioData, 0, audioData.length);
+            // 오디오 데이터 쓰기
+            int written = audioTrack.write(audioData, 0, audioData.length);
+            if (written < 0) {
+                Log.e(TAG, "❌ AudioTrack write 실패: " + written);
+            }
         } catch (Exception e) {
-            Log.e(TAG, "오디오 재생 오류", e);
+            Log.e(TAG, "❌ 오디오 재생 오류", e);
         }
     }
 
@@ -494,17 +537,32 @@ public class OpenAIRealtimeService {
 
     /**
      * 오디오 출력 즉시 음소거 (나가기 버튼 등)
+     * 메인 스레드에서 즉시 호출되어야 함
      */
     public void muteAudioImmediately() {
+        Log.d(TAG, "🔇 오디오 출력 즉시 음소거 요청");
+        
         if (audioTrack != null) {
             try {
-                Log.d(TAG, "🔇 오디오 출력 즉시 음소거");
-                audioTrack.setStereoVolume(0.0f, 0.0f); // 볼륨 0
-                audioTrack.pause(); // 일시 정지
-                audioTrack.flush(); // 버퍼 비우기
+                // 1. 볼륨을 즉시 0으로
+                audioTrack.setStereoVolume(0.0f, 0.0f);
+                Log.d(TAG, "🔇 볼륨 0 설정 완료");
+                
+                // 2. 재생 일시 정지
+                audioTrack.pause();
+                Log.d(TAG, "⏸️ AudioTrack 일시 정지");
+                
+                // 3. 버퍼 비우기 (진행 중인 음성 제거)
+                audioTrack.flush();
+                Log.d(TAG, "🗑️ AudioTrack 버퍼 비우기 완료");
+                
+            } catch (IllegalStateException e) {
+                Log.w(TAG, "⚠️ AudioTrack이 이미 정지됨", e);
             } catch (Exception e) {
-                Log.e(TAG, "오디오 음소거 오류", e);
+                Log.e(TAG, "❌ 오디오 음소거 오류", e);
             }
+        } else {
+            Log.d(TAG, "ℹ️ AudioTrack이 null (이미 종료됨)");
         }
     }
 }
